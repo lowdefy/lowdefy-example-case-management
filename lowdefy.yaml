@@ -22,7 +22,25 @@ global:
     New: '#52c41a'
     Client Contacted: '#13c2c2'
     'Investigation Started': '#1890ff'
+    Flagged: '#f5222d'
+    Comment: '#bfbfbf'
 
+  statusIcons:
+    New:
+      name: PlusCircleTwoTone
+      twoToneColor: '#52c41a'
+    Client Contacted:
+      name: SoundTwoTone
+      twoToneColor: '#13c2c2'
+    'Investigation Started':
+      name: ToolTwoTone
+      twoToneColor: '#1890ff'
+    Flagged:
+      name: FlagTwoTone
+      twoToneColor: '#f5222d'
+    Comment:
+      name: MessageTwoTone
+      twoToneColor: '#bfbfbf'
 pages:
   - _ref: new-query.yaml
   - _ref: queries.yaml

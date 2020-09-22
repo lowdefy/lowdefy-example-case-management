@@ -24,7 +24,9 @@ actions:
               - action: Created
                 time:
                   _date: '2020-09-22T10:34:45.345'
-
+                icon:
+                  name: PlusCircleTwoTone
+                  twoToneColor: '#52c41a'
           - _id: 2
             name: Ms. N Ballalee
             company: Company 2
@@ -36,21 +38,36 @@ actions:
               - action: Investigation Started
                 time:
                   _date: '2020-09-22T12:34:45.345'
+                comment: Blah blageh asdcfv.
+                icon:
+                  name: ToolTwoTone
+                  twoToneColor: '#1890ff'
               - action: Comment
                 time:
                   _date: '2020-09-21T09:35:45.345'
-                description: Blah blageh asdcfv.
+                comment: Blah blageh asdcfv.
+                icon:
+                  name: MessageTwoTone
+                  twoToneColor: '#bfbfbf'
               - action: Flagged
                 time:
                   _date: '2020-09-21T09:35:45.345'
-                description: Blah blageh asdcfv.
+                icon:
+                  name: FlagTwoTone
+                  twoToneColor: '#f5222d'
               - action: Client Contacted
                 time:
                   _date: '2020-09-21T09:34:45.345'
+                comment: Blah blageh asdcfv.
+                icon:
+                  name: SoundTwoTone
+                  twoToneColor: '#13c2c2'
               - action: Created
                 time:
                   _date: '2020-09-20T10:34:45.345'
-
+                icon:
+                  name: PlusCircleTwoTone
+                  twoToneColor: '#52c41a'
 
 blocks:
   - id: lists_box
@@ -155,24 +172,27 @@ blocks:
                 selected._id:
                   $exists: true
             layout:
-              contentGutter: 8
+              contentGutter: 16
             blocks:
               - id: selected.status
                 type: Avatar
                 layout:
                   flex: 0 1 auto
                 properties:
-                  size: small
-                  color:
+                  size: large
+                  color: '#FFFFFF'
+                  icon:
                     _get:
                       from:
-                        _global: statusColors
+                        _global: statusIcons
                       key:
                         _state: selected.status
               - id: selected.title
                 type: Markdown
                 layout:
                   flex: 1 1 auto
+                style:
+                  marginTop: 8
                 properties:
                   content:
                     _nunjucks:
@@ -259,3 +279,24 @@ blocks:
                         {{ description }}
                       on:
                         _state: selected
+              - id: selected.timeline
+                type: Timeline
+                properties:
+                  data:
+                    _state: selected.timeline
+                blocks:
+                  - id: selected.timeline.$.description
+                    type: Html
+                    style:
+                      fontSize: 12
+                    properties:
+                      html:
+                        _nunjucks:
+                          template: |
+                            <h3> {{ action }} </h3>
+                            <p style="font-size: 10px;" ><i>12 April 2020 Sam Tolmay</i></p>
+                            <p>{{ comment }}</p>
+                          on:
+                            _state: selected.timeline.$
+
+
