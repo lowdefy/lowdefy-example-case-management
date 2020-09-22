@@ -1,0 +1,22 @@
+config:
+  auth:
+    createUsers: invite_only
+
+menus:
+  - id: default
+    links:
+      - id: new-query
+        type: MenuLink
+        pageId: new-query
+        properties:
+          icon: AlertOutlined
+          title: New Query
+      - id: queries
+        type: MenuLink
+        pageId: queries
+        properties:
+          icon: ProfileOutlined
+          title: Queries
+
+pages:
+  - _ref: new-query.yaml

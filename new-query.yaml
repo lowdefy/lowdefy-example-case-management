@@ -1,0 +1,71 @@
+id: new-query
+type: PageHeaderMenu
+public: true
+properties:
+  title: New Query
+  content:
+    style:
+      background: '#f5f5f5'
+areas:
+  content:
+    justify: center
+    blocks:
+      - id: max_width
+        type: Box
+        layout:
+          size: 800
+          shrink: 1
+          contentGutter: 8
+        blocks:
+          - id: title
+            type: Title
+            properties:
+              content: New Query
+              level: 2
+          - id: name
+            type: TextInput
+            required: true
+            properties:
+              title: Name
+              size: large
+          - id: company
+            type: AutoComplete
+            required: true
+            properties:
+              title: Company
+              size: large
+              options:
+                - Company, Inc.
+                - Distribution Logistics
+                - GHT Consulting
+          - id: phone
+            type: TextInput
+            required: true
+            properties:
+              title: Phone
+              size: large
+          - id: type
+            type: Selector
+            required: true
+            properties:
+              title: Query Type
+              size: large
+              options:
+                - Invoices
+                - Late Delivery
+                - Return Deposit
+                - Other
+          - id: query
+            type: TextArea
+            required: true
+            properties:
+              title: Query Description
+              size: large
+          - id: submit
+            type: Button
+            style:
+              marginTop: 8
+            properties:
+              title: Submit
+              size: large
+              block: true
