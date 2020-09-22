@@ -1,0 +1,261 @@
+id: queries
+type: PageHeaderMenu
+public: true
+properties:
+  title: Queries
+  content:
+    style:
+      background: '#f5f5f5'
+layout:
+  contentGutter: 16
+actions:
+  onInit:
+    - id: init
+      type: SetState
+      params:
+        open_list:
+          - _id: 1
+            name: Mr A. Namee
+            company: Company 1
+            status: New
+            description: >
+              Cosmic fugue great turbulent clouds white dwarf radio telescope a mote of dust suspended in a sunbeam Vangelis. Star stuff harvesting star light the sky calls to us dispassionate extraterrestrial observer globular star cluster globular star cluster bits of moving fluff. The ash of stellar alchemy something incredible is waiting to be known the carbon in our apple pies with pretty stories for which there's little good evidence cosmic ocean something incredible is waiting to be known.
+            timeline:
+              - action: Created
+                time:
+                  _date: '2020-09-22T10:34:45.345'
+
+          - _id: 2
+            name: Ms. N Ballalee
+            company: Company 2
+            status: Investigation Started
+            flagged: true
+            description: >
+              White dwarf Hypatia extraplanetary Drake Equation at the edge of forever concept of the number one.
+            timeline:
+              - action: Investigation Started
+                time:
+                  _date: '2020-09-22T12:34:45.345'
+              - action: Comment
+                time:
+                  _date: '2020-09-21T09:35:45.345'
+                description: Blah blageh asdcfv.
+              - action: Flagged
+                time:
+                  _date: '2020-09-21T09:35:45.345'
+                description: Blah blageh asdcfv.
+              - action: Client Contacted
+                time:
+                  _date: '2020-09-21T09:34:45.345'
+              - action: Created
+                time:
+                  _date: '2020-09-20T10:34:45.345'
+
+
+blocks:
+  - id: lists_box
+    type: Box
+    layout:
+      span: 14
+    blocks:
+      - id: open_title
+        type: Markdown
+        properties:
+          content: "###### Open"
+      - id: open_card
+        type: Card
+        style:
+          marginTop: 4
+        blocks:
+          - id: open_list
+            type: List
+            blocks:
+              - id: open_list.$.box
+                type: Box
+                actions:
+                  onClick:
+                    - id: set_selected
+                      type: SetState
+                      params:
+                        selected:
+                          _state: open_list.$
+                blocks:
+                  - id: open_list.$.title
+                    type: Markdown
+                    properties:
+                      content:
+                        _nunjucks:
+                          template: |
+                            ##### {{ company }}
+                          on:
+                            _state: open_list.$
+                  - id: open_list.$.status
+                    type: Badge
+                    properties:
+                      color:
+                        _get:
+                          from:
+                            _global: statusColors
+                          key:
+                            _state: open_list.$.status
+                      text:
+                        _state: open_list.$.status
+                  - id: open_list.$.description
+                    type: Markdown
+                    style:
+                      '.markdown-body':
+                        fontSize: 14
+                    properties:
+                      content:
+                        _nunjucks:
+                          template: |
+                            {{ name }}
+                          on:
+                            _state: open_list.$
+                  - id: open_list.$.divider
+                    type: Divider
+                    visible:
+                      _not:
+                        _eq:
+                          - _state: open_list.$._id
+                          - _mql_expr:
+                              $arrayElemAt:
+                                - $open_list._id
+                                - -1
+  - id: selected_box
+    type: Box
+    layout:
+      span: 10
+    blocks:
+      - id: selected.title
+        type: Markdown
+        properties:
+          content: "###### Selected"
+      - id: selected.card
+        type: Card
+        style:
+          marginTop: 4
+        blocks:
+          - id: selected.non_selected
+            type: Result
+            visible:
+              _not:
+                _mql_test:
+                  selected._id:
+                    $exists: true
+            properties:
+              icon:
+                name: ContainerTwoTone
+                twoToneColor: '#bfbfbf'
+              subTitle: No query selected
+          - id: selected.visible_box
+            type: Box
+            visible:
+              _mql_test:
+                selected._id:
+                  $exists: true
+            layout:
+              contentGutter: 8
+            blocks:
+              - id: selected.status
+                type: Avatar
+                layout:
+                  flex: 0 1 auto
+                properties:
+                  size: small
+                  color:
+                    _get:
+                      from:
+                        _global: statusColors
+                      key:
+                        _state: selected.status
+              - id: selected.title
+                type: Markdown
+                layout:
+                  flex: 1 1 auto
+                properties:
+                  content:
+                    _nunjucks:
+                      template: |
+                        ### {{ company }}
+                      on:
+                        _state: selected
+              - id: selected.flag
+                type: Avatar
+                layout:
+                  flex: 0 1 auto
+                properties:
+                  size: large
+                  color: '#FFFFFF'
+                  icon:
+                    name: FlagTwoTone
+                    twoToneColor:
+                      _if:
+                        test:
+                          _eq:
+                            - _state: selected.flagged
+                            - true
+                        then: '#f5222d'
+                        else: '#bfbfbf'
+                actions:
+                  onClick:
+                    - id: set_flagged
+                      type: SetState
+                      params:
+                        selected.flagged:
+                          _not:
+                            _state: selected.flagged
+
+              - id: selected.actions_box
+                type: Box
+                layout:
+                  contentGutter: 8
+                blocks:
+                  - id: selected.change_status_button
+                    type: Button
+                    layout:
+                      flex: 1 1 auto
+                    properties:
+                      title: Change Status
+                      block: true
+                      type: default
+                      icon: RetweetOutlined
+                  - id: selected.comment_button
+                    type: Button
+                    layout:
+                      flex: 1 1 auto
+                    properties:
+                      title: Comment
+                      block: true
+                      type: default
+                      icon: MessageOutlined
+                  - id: selected.escalate_button
+                    type: Button
+                    layout:
+                      flex: 1 1 auto
+                    properties:
+                      title: Escalate
+                      block: true
+                      type: default
+                      icon: ExclamationCircleOutlined
+                  - id: selected.close_button
+                    type: Button
+                    layout:
+                      flex: 1 1 auto
+                    properties:
+                      title: Close
+                      block: true
+                      type: default
+                      icon: StopOutlined
+              - id: selected.description
+                type: Markdown
+                style:
+                  '.markdown-body':
+                    fontSize: 14
+                properties:
+                  content:
+                    _nunjucks:
+                      template: |
+                        {{ description }}
+                      on:
+                        _state: selected

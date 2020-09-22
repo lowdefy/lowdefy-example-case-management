@@ -17,6 +17,12 @@ menus:
         properties:
           icon: ProfileOutlined
           title: Queries
+global:
+  statusColors:
+    New: '#52c41a'
+    Client Contacted: '#13c2c2'
+    'Investigation Started': '#1890ff'
 
 pages:
   - _ref: new-query.yaml
+  - _ref: queries.yaml
