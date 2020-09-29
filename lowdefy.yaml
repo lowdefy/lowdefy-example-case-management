@@ -2,6 +2,23 @@ config:
   auth:
     createUsers: invite_only
 
+connections:
+  - id: queries
+    type: MongoDBCollection
+    properties:
+      databaseUri:
+        _secret: lowdefy_examples_mdb
+      databaseName: example-case-management
+      collection: queries
+      write: true
+  - id: aggregation_runner
+    type: MongoDBCollection
+    properties:
+      databaseUri:
+        _secret: lowdefy_examples_mdb
+      databaseName: example-case-management
+      collection: queries
+
 menus:
   - id: default
     links:
@@ -22,25 +39,28 @@ global:
     New: '#52c41a'
     Client Contacted: '#13c2c2'
     'Investigation Started': '#1890ff'
+
+  actionColors:
+    Created: '#52c41a'
+    Client Contacted: '#13c2c2'
+    'Investigation Started': '#1890ff'
     Flagged: '#f5222d'
+    Removed flag: '#bfbfbf'
     Comment: '#bfbfbf'
 
   statusIcons:
-    New:
-      name: PlusCircleTwoTone
-      twoToneColor: '#52c41a'
-    Client Contacted:
-      name: SoundTwoTone
-      twoToneColor: '#13c2c2'
-    'Investigation Started':
-      name: ToolTwoTone
-      twoToneColor: '#1890ff'
-    Flagged:
-      name: FlagTwoTone
-      twoToneColor: '#f5222d'
-    Comment:
-      name: MessageTwoTone
-      twoToneColor: '#bfbfbf'
+    New: PlusCircleTwoTone
+    Client Contacted: SoundTwoTone
+    'Investigation Started': ToolTwoTone
+
+  actionIcons:
+    Created: PlusCircleTwoTone
+    Client Contacted: SoundTwoTone
+    'Investigation Started': ToolTwoTone
+    Flagged: FlagTwoTone
+    Removed flag: FlagTwoTone
+    Comment: MessageTwoTone
+
 pages:
   - _ref: new-query.yaml
   - _ref: queries.yaml

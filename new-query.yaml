@@ -6,6 +6,45 @@ properties:
   content:
     style:
       background: '#f5f5f5'
+mutations:
+  - id: insert_query
+    type: MongoDBInsertOne
+    connectionId: queries
+    properties:
+      doc:
+        name:
+          _state: name
+        company:
+          _state: company
+        phone:
+          _state: phone
+        type:
+          _state: type
+        query_description:
+          _state: query_description
+        flagged:
+          _state: flagged
+        created_date:
+          _date: now
+        updated_date:
+          _date: now
+        status: New
+        created_user:
+          name:
+            _user: name
+          id:
+            _user: id
+        history:
+          - action: Created
+            status: New
+            timestamp:
+              _date: now
+            user:
+              name:
+                _user: name
+              id:
+                _user: id
+
 areas:
   content:
     justify: center
@@ -55,12 +94,16 @@ areas:
                 - Late Delivery
                 - Return Deposit
                 - Other
-          - id: query
+          - id: query_description
             type: TextArea
             required: true
             properties:
               title: Query Description
               size: large
+          - id: flagged
+            type: Switch
+            properties:
+              title: Flag this query
           - id: submit
             type: Button
             style:
@@ -69,3 +112,12 @@ areas:
               title: Submit
               size: large
               block: true
+            actions:
+              onClick:
+                - id: validate
+                  type: Validate
+                - id: submit
+                  type: Mutate
+                  params: insert_query
+                - id: reset
+                  type: Reset

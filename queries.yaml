@@ -8,69 +8,89 @@ properties:
       background: '#f5f5f5'
 layout:
   contentGutter: 16
+requests:
+  - id: fetch_open_queries
+    type: MongoDBAggregation
+    connectionId: queries
+    properties:
+      pipeline:
+        - $match:
+            status:
+              $ne: Closed
+        - $project:
+            _id: 1
+            name: 1
+            company: 1
+            status: 1
+            flagged: 1
+            created_date: 1
+            created_user.name: 1
+        - $sort:
+            flagged: -1
+            created_date: 1
+  - id: fetch_selected
+    type: MongoDBAggregation
+    connectionId: queries
+    properties:
+      pipeline:
+        - $match:
+            _id:
+              _state: selected_id
+        - $project:
+            status: 1
+            company: 1
+            flagged: 1
+            query_description: 1
+            history:
+              $reverseArray: $history
+
+mutations:
+  - id: set_flagged
+    type: MongoDBUpdateOne
+    connectionId: queries
+    properties:
+      filter:
+        _id:
+          _state: selected_id
+      update:
+        - $set:
+            updated_date:
+              _date: now
+            flagged:
+              _not:
+                _state: selected.flagged
+            history:
+              $concatArrays:
+                - $history
+                - - action:
+                      _if:
+                        test:
+                          _eq:
+                            - _state: selected.flagged
+                            - true
+                        then: Removed flag
+                        else: Flagged
+                    status: $status
+                    timestamp:
+                      _date: now
+                    user:
+                      name:
+                        _user: name
+                      id:
+                        _user: id
 actions:
   onInit:
+    - id: fetch
+      type: Fetch
+      params:
+        - fetch_open_queries
     - id: init
       type: SetState
       params:
         open_list:
-          - _id: 1
-            name: Mr A. Namee
-            company: Company 1
-            status: New
-            description: >
-              Cosmic fugue great turbulent clouds white dwarf radio telescope a mote of dust suspended in a sunbeam Vangelis. Star stuff harvesting star light the sky calls to us dispassionate extraterrestrial observer globular star cluster globular star cluster bits of moving fluff. The ash of stellar alchemy something incredible is waiting to be known the carbon in our apple pies with pretty stories for which there's little good evidence cosmic ocean something incredible is waiting to be known.
-            timeline:
-              - action: Created
-                time:
-                  _date: '2020-09-22T10:34:45.345'
-                icon:
-                  name: PlusCircleTwoTone
-                  twoToneColor: '#52c41a'
-          - _id: 2
-            name: Ms. N Ballalee
-            company: Company 2
-            status: Investigation Started
-            flagged: true
-            description: >
-              White dwarf Hypatia extraplanetary Drake Equation at the edge of forever concept of the number one.
-            timeline:
-              - action: Investigation Started
-                time:
-                  _date: '2020-09-22T12:34:45.345'
-                comment: Blah blageh asdcfv.
-                icon:
-                  name: ToolTwoTone
-                  twoToneColor: '#1890ff'
-              - action: Comment
-                time:
-                  _date: '2020-09-21T09:35:45.345'
-                comment: Blah blageh asdcfv.
-                icon:
-                  name: MessageTwoTone
-                  twoToneColor: '#bfbfbf'
-              - action: Flagged
-                time:
-                  _date: '2020-09-21T09:35:45.345'
-                icon:
-                  name: FlagTwoTone
-                  twoToneColor: '#f5222d'
-              - action: Client Contacted
-                time:
-                  _date: '2020-09-21T09:34:45.345'
-                comment: Blah blageh asdcfv.
-                icon:
-                  name: SoundTwoTone
-                  twoToneColor: '#13c2c2'
-              - action: Created
-                time:
-                  _date: '2020-09-20T10:34:45.345'
-                icon:
-                  name: PlusCircleTwoTone
-                  twoToneColor: '#52c41a'
-
+          _request: fetch_open_queries
 blocks:
-  - id: lists_box
+  - id: list_box
     type: Box
     layout:
       span: 14
@@ -91,21 +111,24 @@ blocks:
                 type: Box
                 actions:
                   onClick:
+                    - id: set_selected_id
+                      type: SetState
+                      params:
+                        selected_id:
+                          _state: open_list.$._id
+                    - id: fetch_selected
+                      type: Fetch
+                      params:
+                        - fetch_selected
                     - id: set_selected
                       type: SetState
                       params:
                         selected:
-                          _state: open_list.$
+                          _get:
+                            key: '0'
+                            from:
+                              _request: fetch_selected
                 blocks:
-                  - id: open_list.$.title
-                    type: Markdown
-                    properties:
-                      content:
-                        _nunjucks:
-                          template: |
-                            ##### {{ company }}
-                          on:
-                            _state: open_list.$
                   - id: open_list.$.status
                     type: Badge
                     properties:
@@ -117,6 +140,19 @@ blocks:
                             _state: open_list.$.status
                       text:
                         _state: open_list.$.status
+                  - id: open_list.$.title
+                    type: Markdown
+                    properties:
+                      content:
+                        _nunjucks:
+                          template: |
+                            ##### {{ company }}
+
+                            created: {{ created_date | date("D MMMM YYYY HH:mm") }} {{ created_user.name }}
+
+                            flagged: {{ flagged }}
+                          on:
+                            _state: open_list.$
                   - id: open_list.$.description
                     type: Markdown
                     style:
@@ -163,7 +199,7 @@ blocks:
             properties:
               icon:
                 name: ContainerTwoTone
-                twoToneColor: '#bfbfbf'
+                color: '#bfbfbf'
               subTitle: No query selected
           - id: selected.visible_box
             type: Box
@@ -175,13 +211,18 @@ blocks:
               contentGutter: 16
             blocks:
               - id: selected.status
-                type: Avatar
+                type: Icon
                 layout:
                   flex: 0 1 auto
                 properties:
-                  size: large
-                  color: '#FFFFFF'
-                  icon:
+                  size: 32
+                  color:
+                    _get:
+                      from:
+                        _global: statusColors
+                      key:
+                        _state: selected.status
+                  name:
                     _get:
                       from:
                         _global: statusIcons
@@ -201,31 +242,38 @@ blocks:
                       on:
                         _state: selected
               - id: selected.flag
-                type: Avatar
+                type: Icon
                 layout:
                   flex: 0 1 auto
                 properties:
-                  size: large
-                  color: '#FFFFFF'
-                  icon:
-                    name: FlagTwoTone
-                    twoToneColor:
-                      _if:
-                        test:
-                          _eq:
-                            - _state: selected.flagged
-                            - true
-                        then: '#f5222d'
-                        else: '#bfbfbf'
+                  size: 32
+                  name: FlagTwoTone
+                  color:
+                    _if:
+                      test:
+                        _eq:
+                          - _state: selected.flagged
+                          - true
+                      then: '#f5222d'
+                      else: '#bfbfbf'
+
                 actions:
                   onClick:
                     - id: set_flagged
+                      type: Mutate
+                      params: set_flagged
+                    - id: fetch_selected
+                      type: Fetch
+                      params:
+                        - fetch_selected
+                    - id: set_selected
                       type: SetState
                       params:
-                        selected.flagged:
-                          _not:
-                            _state: selected.flagged
-
+                        selected:
+                          _get:
+                            key: '0'
+                            from:
+                              _request: fetch_selected
               - id: selected.actions_box
                 type: Box
                 layout:
@@ -276,16 +324,41 @@ blocks:
                   content:
                     _nunjucks:
                       template: |
-                        {{ description }}
+                        {{ query_description }}
                       on:
                         _state: selected
-              - id: selected.timeline
+              - id: selected.history
                 type: Timeline
                 properties:
                   data:
-                    _state: selected.timeline
+                    _mql_aggregate:
+                      pipeline:
+                        - $addFields:
+                            icons:
+                              $objectToArray:
+                                _global: actionIcons
+                            colors:
+                              $objectToArray:
+                                _global: actionColors
+                        - $project:
+                            icon:
+                              name:
+                                $arrayElemAt:
+                                  - $icons.v
+                                  - $indexOfArray:
+                                      - $icons.k
+                                      - $action
+                              color:
+                                $arrayElemAt:
+                                  - $colors.v
+                                  - $indexOfArray:
+                                      - $colors.k
+                                      - $action
+                      on:
+                        _state: selected.history
+
                 blocks:
-                  - id: selected.timeline.$.description
+                  - id: selected.history.$.description
                     type: Html
                     style:
                       fontSize: 12
@@ -294,9 +367,9 @@ blocks:
                         _nunjucks:
                           template: |
                             <h3> {{ action }} </h3>
-                            <p style="font-size: 10px;" ><i>12 April 2020 Sam Tolmay</i></p>
+                            <p style="font-size: 10px;" ><i>{{ timestamp | date("D MMMM YYYY HH:mm") }} {{ user.name }}</i></p>
                             <p>{{ comment }}</p>
                           on:
-                            _state: selected.timeline.$
+                            _state: selected.history.$
 
 
