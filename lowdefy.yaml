@@ -36,32 +36,42 @@ menus:
           title: Queries
 global:
   statuses:
-    - Client Contacted
     - Investigation Started
+    - Client Contacted
+    - Awaiting Confirmation
+
   statusColors:
-    New: '#52c41a'
-    Client Contacted: '#13c2c2'
+    New: '#722ed1'
     Investigation Started: '#1890ff'
-    Closed: '#8c8c8c'
+    Client Contacted: '#13c2c2'
+    Awaiting Confirmation: '#7cb305'
+    Escalated: '#faad14'
+    Closed: '#52c41a'
 
   actionColors:
-    Created: '#52c41a'
-    Changed Status: '#13c2c2'
+    Created: '#722ed1'
+    Changed status to Investigation Started: '#1890ff'
+    Changed status to Client Contacted: '#13c2c2'
+    Changed status to Awaiting Confirmation: '#7cb305'
     Escalated: '#faad14'
     Flagged: '#f5222d'
     Removed flag: '#bfbfbf'
     Commented: '#bfbfbf'
-    Closed: '#8c8c8c'
+    Closed: '#52c41a'
 
   statusIcons:
     New: PlusCircleTwoTone
-    Client Contacted: SoundTwoTone
+    Escalated: ExclamationCircleOutlined
     Investigation Started: ToolTwoTone
+    Client Contacted: SoundTwoTone
+    Awaiting Confirmation: LikeOutlined
     Closed: StopOutlined
 
   actionIcons:
     Created: PlusCircleTwoTone
-    Changed Status: RetweetOutlined
+    Changed status to Investigation Started: ToolTwoTone
+    Changed status to Client Contacted: SoundTwoTone
+    Changed status to Awaiting Confirmation: LikeOutlined
     Escalated: ExclamationCircleOutlined
     Flagged: FlagTwoTone
     Removed flag: FlagTwoTone

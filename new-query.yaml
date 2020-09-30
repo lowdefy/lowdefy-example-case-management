@@ -29,6 +29,8 @@ mutations:
         updated_date:
           _date: now
         status: New
+        query_id:
+          _nunjucks: '{{ now | date("SSSSmmd") }}'
         created_user:
           name:
             _user: name

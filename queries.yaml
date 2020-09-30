@@ -39,8 +39,14 @@ requests:
         - $project:
             status: 1
             company: 1
+            name: 1
+            phone: 1
+            type: 1
             flagged: 1
             query_description: 1
+            query_id: 1
+            created_date: 1
+            updated_date: 1
             history:
               $reverseArray: $history
 
@@ -118,7 +124,8 @@ mutations:
             history:
               $concatArrays:
                 - $history
-                - - action: Changed Status
+                - - action:
+                      _nunjucks: Changed status to {{ selected.change_status_selector }}
                     status:
                       _state: selected.change_status_selector
                     comment:
@@ -130,7 +137,6 @@ mutations:
                         _user: name
                       id:
                         _user: id
-
   - id: comment_on_query
     type: MongoDBUpdateOne
     connectionId: queries
@@ -149,6 +155,32 @@ mutations:
                     status: $status
                     comment:
                       _state: selected.comment_input
+                    timestamp:
+                      _date: now
+                    user:
+                      name:
+                        _user: name
+                      id:
+                        _user: id
+  - id: escalate_query
+    type: MongoDBUpdateOne
+    connectionId: queries
+    properties:
+      filter:
+        _id:
+          _state: selected_id
+      update:
+        - $set:
+            updated_date:
+              _date: now
+            status: Escalated
+            history:
+              $concatArrays:
+                - $history
+                - - action: Escalated
+                    status: Escalated
+                    comment:
+                      _state: selected.escalate_comment
                     timestamp:
                       _date: now
                     user:
@@ -289,70 +321,89 @@ blocks:
             layout:
               contentGutter: 16
             blocks:
-              - id: selected.status
-                type: Icon
+              - id: selected.header_box
+                type: Box
                 layout:
-                  flex: 0 1 auto
-                properties:
-                  size: 32
-                  color:
-                    _get:
-                      from:
-                        _global: statusColors
-                      key:
-                        _state: selected.status
-                  name:
-                    _get:
-                      from:
-                        _global: statusIcons
-                      key:
-                        _state: selected.status
-              - id: selected.title
-                type: Markdown
-                layout:
-                  flex: 1 1 auto
-                style:
-                  marginTop: 8
-                properties:
-                  content:
-                    _nunjucks:
-                      template: |
-                        ### {{ company }}
-                      on:
-                        _state: selected
-              - id: selected.flag
-                type: Icon
-                layout:
-                  flex: 0 1 auto
-                properties:
-                  size: 32
-                  name: FlagTwoTone
-                  color:
-                    _if:
-                      test:
-                        _eq:
-                          - _state: selected.flagged
-                          - true
-                      then: '#f5222d'
-                      else: '#bfbfbf'
+                  contentAlign: middle
+                  contentGutter: 16
+                blocks:
+                  - id: selected.status_icon
+                    type: Icon
+                    layout:
+                      flex: 0 1 auto
+                    properties:
+                      size: 32
+                      color:
+                        _get:
+                          from:
+                            _global: statusColors
+                          key:
+                            _state: selected.status
+                      name:
+                        _get:
+                          from:
+                            _global: statusIcons
+                          key:
+                            _state: selected.status
+                  - id: selected.status
+                    type: Html
+                    layout:
+                      flex: 0 1 auto
+                    properties:
+                      html:
+                        _nunjucks:
+                          template: |
+                            <span>
+                              {{ status }}
+                            </span>
+                          on:
+                            _state: selected
+                  - id: selected.query_id
+                    type: Html
+                    layout:
+                      flex: 1 1 auto
+                    properties:
+                      html:
+                        _nunjucks:
+                          template: |
+                            <font style='font-size:24px' >
+                              <b>#{{ query_id }}</b>
+                            </font>
+                          on:
+                            _state: selected
+                  - id: selected.flag
+                    type: Icon
+                    layout:
+                      flex: 0 1 auto
+                    properties:
+                      size: 32
+                      name: FlagTwoTone
+                      color:
+                        _if:
+                          test:
+                            _eq:
+                              - _state: selected.flagged
+                              - true
+                          then: '#f5222d'
+                          else: '#bfbfbf'
 
-                actions:
-                  onClick:
-                    - id: set_flagged
-                      type: Mutate
-                      params: set_flagged
-                    - id: fetch
-                      type: Fetch
-                    - id: set_state
-                      type: SetState
-                      params:
-                        selected:
-                          _get:
-                            key: '0'
-                            from:
-                              _request: fetch_selected
-                        open_list:
-                          _request: fetch_open_queries
+                    actions:
+                      onClick:
+                        - id: set_flagged
+                          type: Mutate
+                          params: set_flagged
+                        - id: fetch
+                          type: Fetch
+                        - id: set_state
+                          type: SetState
+                          params:
+                            selected:
+                              _get:
+                                key: '0'
+                                from:
+                                  _request: fetch_selected
+                            open_list:
+                              _request: fetch_open_queries
               - id: selected.actions_box
                 type: Box
                 layout:
@@ -399,6 +450,13 @@ blocks:
                       block: true
                       type: default
                       icon: ExclamationCircleOutlined
+                    actions:
+                      onClick:
+                        - id: open_escalate_modal
+                          type: CallMethod
+                          params:
+                            blockId: selected.escalate_modal
+                            method: toggleOpen
                   - id: selected.close_button
                     type: Button
                     layout:
@@ -416,7 +474,29 @@ blocks:
                             blockId: selected.confirm_close_modal
                             method: toggleOpen
 
-              - id: selected.description
+              - id: selected.descriptions
+                type: Descriptions
+                properties:
+                  bordered: true
+                  column: 1
+                  size: small
+                  items:
+                    - label: Name
+                      value:
+                        _state: selected.name
+                    - label: Company
+                      value:
+                        _state: selected.company
+                    - label: Phone
+                      value:
+                        _state: selected.phone
+                    - label: Created
+                      value:
+                        _nunjucks: '{{ selected.created_date | date("D MMMM YYYY HH:mm") }}'
+                    - label: Last Updated
+                      value:
+                        _nunjucks: '{{ selected.updated_date | date("D MMMM YYYY HH:mm") }}'
+              - id: selected.query_description
                 type: Markdown
                 style:
                   '.markdown-body':
@@ -516,8 +596,6 @@ blocks:
         type: TextArea
         properties:
           title: comment
-
-
   - id: selected.comment_modal
     type: Modal
     properties:
@@ -556,7 +634,43 @@ blocks:
         properties:
           label:
             disabled: true
-
+  - id: selected.escalate_modal
+    type: Modal
+    properties:
+      okText: Escalate
+    actions:
+      onOk:
+        - id: validate
+          type: Validate
+          errorMessage: A comment is required.
+          params: selected.escalate_comment
+        - id: escalate_query
+          type: Mutate
+          params: escalate_query
+        - id: fetch
+          type: Fetch
+        - id: set_state
+          type: SetState
+          params:
+            selected:
+              _get:
+                key: '0'
+                from:
+                  _request: fetch_selected
+            open_list:
+              _request: fetch_open_queries
+    blocks:
+      - id: selected.comment_modal_title
+        type: Markdown
+        style:
+          marginBottom: 16px
+        properties:
+          content: "#### Escalate Query"
+      - id: selected.escalate_comment
+        type: TextArea
+        required: true
+        properties:
+          title: comment
   - id: selected.confirm_close_modal
     type: Modal
     properties:
