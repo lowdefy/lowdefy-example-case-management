@@ -35,31 +35,38 @@ menus:
           icon: ProfileOutlined
           title: Queries
 global:
+  statuses:
+    - Client Contacted
+    - Investigation Started
   statusColors:
     New: '#52c41a'
     Client Contacted: '#13c2c2'
-    'Investigation Started': '#1890ff'
+    Investigation Started: '#1890ff'
+    Closed: '#8c8c8c'
 
   actionColors:
     Created: '#52c41a'
-    Client Contacted: '#13c2c2'
-    'Investigation Started': '#1890ff'
+    Changed Status: '#13c2c2'
+    Escalated: '#faad14'
     Flagged: '#f5222d'
     Removed flag: '#bfbfbf'
-    Comment: '#bfbfbf'
+    Commented: '#bfbfbf'
+    Closed: '#8c8c8c'
 
   statusIcons:
     New: PlusCircleTwoTone
     Client Contacted: SoundTwoTone
-    'Investigation Started': ToolTwoTone
+    Investigation Started: ToolTwoTone
+    Closed: StopOutlined
 
   actionIcons:
     Created: PlusCircleTwoTone
-    Client Contacted: SoundTwoTone
-    'Investigation Started': ToolTwoTone
+    Changed Status: RetweetOutlined
+    Escalated: ExclamationCircleOutlined
     Flagged: FlagTwoTone
     Removed flag: FlagTwoTone
-    Comment: MessageTwoTone
+    Commented: MessageTwoTone
+    Closed: StopOutlined
 
 pages:
   - _ref: new-query.yaml
