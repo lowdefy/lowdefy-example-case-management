@@ -25,6 +25,7 @@ requests:
             flagged: 1
             created_date: 1
             created_user.name: 1
+            query_id: 1
         - $sort:
             flagged: -1
             created_date: 1
@@ -240,40 +241,86 @@ blocks:
                             from:
                               _request: fetch_selected
                 blocks:
-                  - id: open_list.$.status
-                    type: Badge
-                    properties:
-                      color:
-                        _get:
-                          from:
-                            _global: statusColors
-                          key:
-                            _state: open_list.$.status
-                      text:
-                        _state: open_list.$.status
-                  - id: open_list.$.title
-                    type: Markdown
-                    properties:
-                      content:
-                        _nunjucks:
-                          template: |
-                            ##### {{ company }}
-
-                            created: {{ created_date | date("D MMMM YYYY HH:mm") }} {{ created_user.name }}
-
-                            flagged: {{ flagged }}
-                          on:
-                            _state: open_list.$
+                  - id: open_list.$.header_box
+                    type: Box
+                    layout:
+                      contentAlign: middle
+                      contentGutter: 16
+                    blocks:
+                      - id: open_list.$.status_icon
+                        type: Icon
+                        layout:
+                          flex: 0 1 auto
+                        properties:
+                          size: 12
+                          color:
+                            _get:
+                              from:
+                                _global: statusColors
+                              key:
+                                _state: open_list.$.status
+                          name:
+                            _get:
+                              from:
+                                _global: statusIcons
+                              key:
+                                _state: open_list.$.status
+                      - id: open_list.$.status
+                        type: Html
+                        layout:
+                          flex: 0 1 auto
+                        properties:
+                          html:
+                            _nunjucks:
+                              template: |
+                                <font style='font-size:12px' >
+                                  {{ status }}
+                                </font>
+                              on:
+                                _state: open_list.$
+                      - id: open_list.$.query_id
+                        type: Html
+                        layout:
+                          flex: 1 1 auto
+                        properties:
+                          html:
+                            _nunjucks:
+                              template: |
+                                <font style='font-size:14px' >
+                                  <b>#{{ query_id }}</b>
+                                </font>
+                              on:
+                                _state: open_list.$
+                      - id: open_list.$.flag
+                        type: Icon
+                        layout:
+                          flex: 0 1 auto
+                        properties:
+                          size: 12
+                          name: FlagTwoTone
+                          color:
+                            _if:
+                              test:
+                                _eq:
+                                  - _state: open_list.$.flagged
+                                  - true
+                              then: '#f5222d'
+                              else: '#bfbfbf'
                   - id: open_list.$.description
-                    type: Markdown
-                    style:
-                      '.markdown-body':
-                        fontSize: 14
+                    type: Html
                     properties:
-                      content:
+                      html:
                         _nunjucks:
                           template: |
-                            {{ name }}
+                            <p>
+                              <font style='font-size:14px' >
+                                  <b>{{ company }}</b>
+                              </font>
+                              <font style='font-size:12px' >
+                                {{ name }}
+                              </font>
+                            </p>
+                            <font style="font-size: 10px;" ><i>Created: {{ created_date | date("lll") }} {{ created_user.name }}</i></font>
                           on:
                             _state: open_list.$
                   - id: open_list.$.divider
@@ -492,10 +539,10 @@ blocks:
                         _state: selected.phone
                     - label: Created
                       value:
-                        _nunjucks: '{{ selected.created_date | date("D MMMM YYYY HH:mm") }}'
+                        _nunjucks: '{{ selected.created_date | date("llll") }}'
                     - label: Last Updated
                       value:
-                        _nunjucks: '{{ selected.updated_date | date("D MMMM YYYY HH:mm") }}'
+                        _nunjucks: '{{ selected.updated_date | date("llll") }}'
               - id: selected.query_description
                 type: Markdown
                 style:
@@ -548,7 +595,7 @@ blocks:
                         _nunjucks:
                           template: |
                             <h3> {{ action }} </h3>
-                            <p style="font-size: 10px;" ><i>{{ timestamp | date("D MMMM YYYY HH:mm") }} {{ user.name }}</i></p>
+                            <p style="font-size: 10px;" ><i>{{ timestamp | date("lll") }} {{ user.name }}</i></p>
                             <p>{{ comment }}</p>
                           on:
                             _state: selected.history.$
