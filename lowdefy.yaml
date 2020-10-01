@@ -1,6 +1,6 @@
 config:
   auth:
-    createUsers: invite_only
+    createUsers: sign_up
 
 connections:
   - id: queries
@@ -11,13 +11,6 @@ connections:
       databaseName: example-case-management
       collection: queries
       write: true
-  - id: aggregation_runner
-    type: MongoDBCollection
-    properties:
-      databaseUri:
-        _secret: lowdefy_examples_mdb
-      databaseName: example-case-management
-      collection: queries
 
 menus:
   - id: default
