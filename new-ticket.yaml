@@ -1,15 +1,15 @@
-id: new-query
+id: new-ticket
 type: PageHeaderMenu
 public: true
 properties:
-  title: New Query
+  title: New Ticket
   content:
     style:
       background: '#f5f5f5'
 mutations:
-  - id: insert_query
+  - id: insert_ticket
     type: MongoDBInsertOne
-    connectionId: queries
+    connectionId: tickets
     properties:
       doc:
         name:
@@ -20,8 +20,8 @@ mutations:
           _state: phone
         type:
           _state: type
-        query_description:
-          _state: query_description
+        ticket_description:
+          _state: ticket_description
         flagged:
           _state: flagged
         created_date:
@@ -29,8 +29,12 @@ mutations:
         updated_date:
           _date: now
         status: New
-        query_id:
+        ticket_id:
           _nunjucks: '{{ now | date("SSSSmmd") }}'
+        satisfaction_score:
+          _nunjucks: '{{ now | date("ss") }}'
+        past_orders:
+          _nunjucks: '{{ now | date("SS") }}'
         created_user:
           name:
             _user: name
@@ -61,7 +65,7 @@ areas:
           - id: title
             type: Title
             properties:
-              content: New Query
+              content: New query
               level: 2
           - id: name
             type: TextInput
@@ -89,23 +93,23 @@ areas:
             type: Selector
             required: true
             properties:
-              title: Query Type
+              title: Ticket type
               size: large
               options:
                 - Invoices
                 - Late Delivery
                 - Return Deposit
                 - Other
-          - id: query_description
+          - id: ticket_description
             type: TextArea
             required: true
             properties:
-              title: Query Description
+              title: Ticket description
               size: large
           - id: flagged
             type: Switch
             properties:
-              title: Flag this query
+              title: Flag this ticket
           - id: submit
             type: Button
             style:
@@ -120,6 +124,6 @@ areas:
                   type: Validate
                 - id: submit
                   type: Mutate
-                  params: insert_query
+                  params: insert_ticket
                 - id: reset
                   type: Reset

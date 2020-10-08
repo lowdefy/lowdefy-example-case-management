@@ -1,22 +1,82 @@
-id: queries
+id: tickets
 type: PageHeaderMenu
 public: true
 properties:
-  title: Queries
+  title: Tickets
   content:
     style:
       background: '#f5f5f5'
 layout:
   contentGutter: 16
+
+actions:
+  onEnter:
+    - id: fetch
+      type: Fetch
+      params:
+        - fetch_tickets
+    - id: init
+      type: SetState
+      params:
+        ticket:
+          _request: fetch_tickets
+        open_closed_selector: Open
+        flagged_selector: []
+
 requests:
-  - id: fetch_open_queries
+  - id: fetch_tickets
     type: MongoDBAggregation
-    connectionId: queries
+    connectionId: tickets
     properties:
       pipeline:
         - $match:
-            status:
-              $ne: Closed
+            $expr:
+              $and:
+                - $or:
+                  - $ne:
+                      - $indexOfCP:
+                        - $toLower:
+                            $company
+                        - $toLower:
+                            $ifNull:
+                              - _state: search_input
+                              - ''
+                      - -1
+                  - $ne:
+                      - $indexOfCP:
+                        - $toLower:
+                            $name
+                        - $toLower:
+                            $ifNull:
+                              - _state: search_input
+                              - ''
+                      - -1
+                - $eq:
+                    - $status
+                    - $ifNull:
+                        - _state: status_selector
+                        - $status
+                - $eq:
+                    - $type
+                    - $ifNull:
+                        - _state: type_selector
+                        - $type
+                - $cond:
+                    - $eq:
+                        - _state: open_closed_selector
+                        - Closed
+                    - $eq:
+                        - $status
+                        - Closed
+                    - $ne:
+                        - $status
+                        - Closed
+                - $cond:
+                    - $in:
+                        - Only flagged
+                        - _state: flagged_selector
+                    - $flagged
+                    - true
         - $project:
             _id: 1
             name: 1
@@ -25,13 +85,13 @@ requests:
             flagged: 1
             created_date: 1
             created_user.name: 1
-            query_id: 1
+            ticket_id: 1
         - $sort:
             flagged: -1
             created_date: 1
   - id: fetch_selected
     type: MongoDBAggregation
-    connectionId: queries
+    connectionId: tickets
     properties:
       pipeline:
         - $match:
@@ -44,17 +104,22 @@ requests:
             phone: 1
             type: 1
             flagged: 1
-            query_description: 1
-            query_id: 1
+            ticket_description: 1
+            ticket_id: 1
             created_date: 1
             updated_date: 1
+            satisfaction_score:
+              $add:
+                - $toInt: $satisfaction_score
+                - 40
+            past_orders: 1
             history:
               $reverseArray: $history
 
 mutations:
   - id: set_flagged
     type: MongoDBUpdateOne
-    connectionId: queries
+    connectionId: tickets
     properties:
       filter:
         _id:
@@ -85,9 +150,9 @@ mutations:
                         _user: name
                       id:
                         _user: id
-  - id: close_query
+  - id: close_ticket
     type: MongoDBUpdateOne
-    connectionId: queries
+    connectionId: tickets
     properties:
       filter:
         _id:
@@ -100,7 +165,7 @@ mutations:
             history:
               $concatArrays:
                 - $history
-                - - action: Closed query
+                - - action: Closed ticket
                     status: Closed
                     timestamp:
                       _date: now
@@ -109,9 +174,9 @@ mutations:
                         _user: name
                       id:
                         _user: id
-  - id: change_status_on_query
+  - id: change_status_on_ticket
     type: MongoDBUpdateOne
-    connectionId: queries
+    connectionId: tickets
     properties:
       filter:
         _id:
@@ -138,9 +203,9 @@ mutations:
                         _user: name
                       id:
                         _user: id
-  - id: comment_on_query
+  - id: comment_on_ticket
     type: MongoDBUpdateOne
-    connectionId: queries
+    connectionId: tickets
     properties:
       filter:
         _id:
@@ -163,9 +228,9 @@ mutations:
                         _user: name
                       id:
                         _user: id
-  - id: escalate_query
+  - id: escalate_ticket
     type: MongoDBUpdateOne
-    connectionId: queries
+    connectionId: tickets
     properties:
       filter:
         _id:
@@ -190,36 +255,183 @@ mutations:
                       id:
                         _user: id
 
-actions:
-  onInit:
-    - id: fetch
-      type: Fetch
-      params:
-        - fetch_open_queries
-    - id: init
-      type: SetState
-      params:
-        open_list:
-          _request: fetch_open_queries
 blocks:
   - id: list_box
     type: Box
     layout:
-      span: 14
+      span: 10
+      contentGutter: 6
     blocks:
       - id: open_title
         type: Markdown
         properties:
-          content: "###### Open"
+          content: "###### Tickets"
+      - id: search_box
+        type: Box
+        layout:
+          contentGutter: 6
+        blocks:
+          - id: search_input
+            type: TextInput
+            layout:
+              flex: 1 1 auto
+            properties:
+              placeholder: Search
+              label:
+                disabled: true
+            actions:
+              onPressEnter:
+                - id: reset_selected
+                  type: SetState
+                  params:
+                    selected: {}
+                - id: fetch
+                  type: Fetch
+                  params:
+                    - fetch_tickets
+                - id: set_fetched_tickets
+                  type: SetState
+                  params:
+                    ticket:
+                      _request: fetch_tickets
+          - id: search_button
+            type: Button
+            layout:
+              flex: 0 1 auto
+            properties:
+              title: Search
+              icon: SearchOutlined
+            actions:
+              onClick:
+                - id: reset_selected
+                  type: SetState
+                  params:
+                    selected: {}
+                - id: fetch
+                  type: Fetch
+                  params:
+                    - fetch_tickets
+                - id: set_fetched_tickets
+                  type: SetState
+                  params:
+                    ticket:
+                      _request: fetch_tickets
+      - id: status_selector
+        type: Selector
+        layout:
+          span: 6
+        properties:
+          label:
+            disabled: true
+          placeholder: Status
+          options:
+            _global: statuses
+          size: small
+        actions:
+          onChange:
+            - id: reset_selected
+              type: SetState
+              params:
+                selected: {}
+            - id: fetch
+              type: Fetch
+              params:
+                - fetch_tickets
+            - id: set_fetched_tickets
+              type: SetState
+              params:
+                ticket:
+                  _request: fetch_tickets
+      - id: type_selector
+        type: Selector
+        layout:
+          span: 6
+        properties:
+          label:
+            disabled: true
+          placeholder: Type
+          options:
+            - Invoices
+            - Late Delivery
+            - Return Deposit
+            - Other
+          size: small
+        actions:
+          onChange:
+            - id: reset_selected
+              type: SetState
+              params:
+                selected: {}
+            - id: fetch
+              type: Fetch
+              params:
+                - fetch_tickets
+            - id: set_fetched_tickets
+              type: SetState
+              params:
+                ticket:
+                  _request: fetch_tickets
+      - id: open_closed_selector
+        type: Selector
+        layout:
+          span: 6
+        properties:
+          allowClear: false
+          label:
+            disabled: true
+          options:
+            - Open
+            - Closed
+          size:
+            small
+        actions:
+          onChange:
+            - id: reset_selected
+              type: SetState
+              params:
+                selected: {}
+            - id: fetch
+              type: Fetch
+              params:
+                - fetch_tickets
+            - id: set_fetched_tickets
+              type: SetState
+              params:
+                ticket:
+                  _request: fetch_tickets
+      - id: flagged_selector
+        type: CheckboxSelector
+        layout:
+          span: 6
+        properties:
+          label:
+            disabled: true
+          options:
+            - Only flagged
+        actions:
+          onChange:
+            - id: reset_selected
+              type: SetState
+              params:
+                selected: {}
+            - id: fetch
+              type: Fetch
+              params:
+                - fetch_tickets
+            - id: set_fetched_tickets
+              type: SetState
+              params:
+                ticket:
+                  _request: fetch_tickets
       - id: open_card
         type: Card
         style:
           marginTop: 4
         blocks:
-          - id: open_list
+          - id: ticket
             type: List
             blocks:
-              - id: open_list.$.box
+              - id: ticket.$.box
                 type: Box
                 actions:
                   onClick:
@@ -227,7 +439,7 @@ blocks:
                       type: SetState
                       params:
                         selected_id:
-                          _state: open_list.$._id
+                          _state: ticket.$._id
                     - id: fetch_selected
                       type: Fetch
                       params:
@@ -241,13 +453,13 @@ blocks:
                             from:
                               _request: fetch_selected
                 blocks:
-                  - id: open_list.$.header_box
+                  - id: ticket.$.header_box
                     type: Box
                     layout:
                       contentAlign: middle
                       contentGutter: 16
                     blocks:
-                      - id: open_list.$.status_icon
+                      - id: ticket.$.status_icon
                         type: Icon
                         layout:
                           flex: 0 1 auto
@@ -258,14 +470,14 @@ blocks:
                               from:
                                 _global: statusColors
                               key:
-                                _state: open_list.$.status
+                                _state: ticket.$.status
                           name:
                             _get:
                               from:
                                 _global: statusIcons
                               key:
-                                _state: open_list.$.status
-                      - id: open_list.$.status
+                                _state: ticket.$.status
+                      - id: ticket.$.status
                         type: Html
                         layout:
                           flex: 0 1 auto
@@ -277,8 +489,8 @@ blocks:
                                   {{ status }}
                                 </font>
                               on:
-                                _state: open_list.$
-                      - id: open_list.$.query_id
+                                _state: ticket.$
+                      - id: ticket.$.ticket_id
                         type: Html
                         layout:
                           flex: 1 1 auto
@@ -287,11 +499,11 @@ blocks:
                             _nunjucks:
                               template: |
                                 <font style='font-size:14px' >
-                                  <b>#{{ query_id }}</b>
+                                  <b>#{{ ticket_id }}</b>
                                 </font>
                               on:
-                                _state: open_list.$
-                      - id: open_list.$.flag
+                                _state: ticket.$
+                      - id: ticket.$.flag
                         type: Icon
                         layout:
                           flex: 0 1 auto
@@ -302,11 +514,11 @@ blocks:
                             _if:
                               test:
                                 _eq:
-                                  - _state: open_list.$.flagged
+                                  - _state: ticket.$.flagged
                                   - true
                               then: '#f5222d'
                               else: '#bfbfbf'
-                  - id: open_list.$.description
+                  - id: ticket.$.description
                     type: Html
                     properties:
                       html:
@@ -322,21 +534,21 @@ blocks:
                             </p>
                             <font style="font-size: 10px;" ><i>Created: {{ created_date | date("lll") }} {{ created_user.name }}</i></font>
                           on:
-                            _state: open_list.$
-                  - id: open_list.$.divider
+                            _state: ticket.$
+                  - id: ticket.$.divider
                     type: Divider
                     visible:
                       _not:
                         _eq:
-                          - _state: open_list.$._id
+                          - _state: ticket.$._id
                           - _mql_expr:
                               $arrayElemAt:
-                                - $open_list._id
+                                - $ticket._id
                                 - -1
   - id: selected_box
     type: Box
     layout:
-      span: 10
+      span: 14
     blocks:
       - id: selected.title
         type: Markdown
@@ -358,7 +570,7 @@ blocks:
               icon:
                 name: ContainerTwoTone
                 color: '#bfbfbf'
-              subTitle: No query selected
+              subTitle: No ticket selected
           - id: selected.visible_box
             type: Box
             visible:
@@ -405,7 +617,7 @@ blocks:
                             </span>
                           on:
                             _state: selected
-                  - id: selected.query_id
+                  - id: selected.ticket_id
                     type: Html
                     layout:
                       flex: 1 1 auto
@@ -414,7 +626,7 @@ blocks:
                         _nunjucks:
                           template: |
                             <font style='font-size:24px' >
-                              <b>#{{ query_id }}</b>
+                              <b>#{{ ticket_id }}</b>
                             </font>
                           on:
                             _state: selected
@@ -449,8 +661,8 @@ blocks:
                                 key: '0'
                                 from:
                                   _request: fetch_selected
-                            open_list:
-                              _request: fetch_open_queries
+                            ticket:
+                              _request: fetch_tickets
               - id: selected.actions_box
                 type: Box
                 layout:
@@ -459,7 +671,7 @@ blocks:
                   - id: selected.change_status_button
                     type: Button
                     layout:
-                      flex: 1 1 auto
+                      span: 6
                     properties:
                       title: Change Status
                       block: true
@@ -475,7 +687,7 @@ blocks:
                   - id: selected.comment_button
                     type: Button
                     layout:
-                      flex: 1 1 auto
+                      span: 6
                     properties:
                       title: Comment
                       block: true
@@ -491,7 +703,7 @@ blocks:
                   - id: selected.escalate_button
                     type: Button
                     layout:
-                      flex: 1 1 auto
+                      span: 6
                     properties:
                       title: Escalate
                       block: true
@@ -507,7 +719,7 @@ blocks:
                   - id: selected.close_button
                     type: Button
                     layout:
-                      flex: 1 1 auto
+                      span: 6
                     properties:
                       title: Close
                       block: true
@@ -520,85 +732,116 @@ blocks:
                           params:
                             blockId: selected.confirm_close_modal
                             method: toggleOpen
-
-              - id: selected.descriptions
-                type: Descriptions
-                properties:
-                  bordered: true
-                  column: 1
-                  size: small
-                  items:
-                    - label: Name
-                      value:
-                        _state: selected.name
-                    - label: Company
-                      value:
-                        _state: selected.company
-                    - label: Phone
-                      value:
-                        _state: selected.phone
-                    - label: Created
-                      value:
-                        _nunjucks: '{{ selected.created_date | date("llll") }}'
-                    - label: Last Updated
-                      value:
-                        _nunjucks: '{{ selected.updated_date | date("llll") }}'
-              - id: selected.query_description
-                type: Markdown
-                style:
-                  '.markdown-body':
-                    fontSize: 14
-                properties:
-                  content:
-                    _nunjucks:
-                      template: |
-                        {{ query_description }}
-                      on:
-                        _state: selected
-              - id: selected.history
-                type: Timeline
-                properties:
-                  data:
-                    _mql_aggregate:
-                      pipeline:
-                        - $addFields:
-                            icons:
-                              $objectToArray:
-                                _global: actionIcons
-                            colors:
-                              $objectToArray:
-                                _global: actionColors
-                        - $project:
-                            icon:
-                              name:
-                                $arrayElemAt:
-                                  - $icons.v
-                                  - $indexOfArray:
-                                      - $icons.k
-                                      - $action
-                              color:
-                                $arrayElemAt:
-                                  - $colors.v
-                                  - $indexOfArray:
-                                      - $colors.k
-                                      - $action
-                      on:
-                        _state: selected.history
-
+              - id: selected.description_box
+                type: Box
+                layout:
+                  contentGutter: 42
                 blocks:
-                  - id: selected.history.$.description
-                    type: Html
-                    style:
-                      fontSize: 12
+                  - id: selected.descriptions
+                    type: Descriptions
+                    layout:
+                      span: 12
                     properties:
-                      html:
+                      bordered: true
+                      column: 1
+                      size: small
+                      items:
+                        - label: Name
+                          value:
+                            _state: selected.name
+                        - label: Company
+                          value:
+                            _state: selected.company
+                        - label: Phone
+                          value:
+                            _state: selected.phone
+                  - id: selected.satisfaction_box
+                    type: Box
+                    layout:
+                      span: 12
+                      contentJustify: center
+                      contentGutter: 4
+                    blocks:
+                      - id: selected.satisfaction_title
+                        type: Markdown
+                        properties:
+                          content: "###### Satisfaction score"
+                      - id: selected.satisfaction_score
+                        type: Progress
+                        properties:
+                          showInfo: true
+                          percent:
+                            _state: selected.satisfaction_score
+                          strokeColor:
+                            from: '#faad14'
+                            to: '#52c41a'
+                      - id: selected.satisfaction_title
+                        type: Markdown
+                        properties:
+                          content: "###### Past orders"
+                      - id: selected.past_orders
+                        type: Statistic
+                        properties:
+                          suffixIcon: ShoppingCartOutlined
+                          value:
+                            _state: selected.past_orders
+                  - id: selected.ticket_description
+                    type: Markdown
+                    style:
+                      '.markdown-body':
+                        fontSize: 14
+                    properties:
+                      content:
                         _nunjucks:
                           template: |
-                            <h3> {{ action }} </h3>
-                            <p style="font-size: 10px;" ><i>{{ timestamp | date("lll") }} {{ user.name }}</i></p>
-                            <p>{{ comment }}</p>
+                            {{ ticket_description }}
                           on:
-                            _state: selected.history.$
+                            _state: selected
+
+                  - id: selected.history
+                    type: Timeline
+                    properties:
+                      data:
+                        _mql_aggregate:
+                          pipeline:
+                            - $addFields:
+                                icons:
+                                  $objectToArray:
+                                    _global: actionIcons
+                                colors:
+                                  $objectToArray:
+                                    _global: actionColors
+                            - $project:
+                                icon:
+                                  name:
+                                    $arrayElemAt:
+                                      - $icons.v
+                                      - $indexOfArray:
+                                          - $icons.k
+                                          - $action
+                                  color:
+                                    $arrayElemAt:
+                                      - $colors.v
+                                      - $indexOfArray:
+                                          - $colors.k
+                                          - $action
+                          on:
+                            _state: selected.history
+
+                    blocks:
+                      - id: selected.history.$.description
+                        type: Html
+                        style:
+                          fontSize: 12
+                        properties:
+                          html:
+                            _nunjucks:
+                              template: |
+                                <h3> {{ action }} </h3>
+                                <p style="font-size: 10px;" ><i>{{ timestamp | date("lll") }} {{ user.name }}</i></p>
+                                <p>{{ comment }}</p>
+                              on:
+                                _state: selected.history.$
 
   - id: selected.change_status_modal
     type: Modal
@@ -610,9 +853,9 @@ blocks:
           type: Validate
           errorMessage: A status is required.
           params: selected.change_status_selector
-        - id: change_status_on_query
+        - id: change_status_on_ticket
           type: Mutate
-          params: change_status_on_query
+          params: change_status_on_ticket
         - id: fetch
           type: Fetch
         - id: set_state
@@ -623,8 +866,8 @@ blocks:
                 key: '0'
                 from:
                   _request: fetch_selected
-            open_list:
-              _request: fetch_open_queries
+            ticket:
+              _request: fetch_tickets
     blocks:
       - id: selected.comment_modal_title
         type: Markdown
@@ -653,9 +896,9 @@ blocks:
           type: Validate
           errorMessage: A comment is required.
           params: selected.comment_input
-        - id: comment_on_query
+        - id: comment_on_ticket
           type: Mutate
-          params: comment_on_query
+          params: comment_on_ticket
         - id: fetch
           type: Fetch
         - id: set_state
@@ -666,8 +909,8 @@ blocks:
                 key: '0'
                 from:
                   _request: fetch_selected
-            open_list:
-              _request: fetch_open_queries
+            ticket:
+              _request: fetch_tickets
     blocks:
       - id: selected.comment_modal_title
         type: Markdown
@@ -691,9 +934,9 @@ blocks:
           type: Validate
           errorMessage: A comment is required.
           params: selected.escalate_comment
-        - id: escalate_query
+        - id: escalate_ticket
           type: Mutate
-          params: escalate_query
+          params: escalate_ticket
         - id: fetch
           type: Fetch
         - id: set_state
@@ -704,15 +947,15 @@ blocks:
                 key: '0'
                 from:
                   _request: fetch_selected
-            open_list:
-              _request: fetch_open_queries
+            ticket:
+              _request: fetch_tickets
     blocks:
       - id: selected.comment_modal_title
         type: Markdown
         style:
           marginBottom: 16px
         properties:
-          content: "#### Escalate Query"
+          content: "#### Escalate ticket"
       - id: selected.escalate_comment
         type: TextArea
         required: true
@@ -726,9 +969,9 @@ blocks:
       okText: Close
     actions:
       onOk:
-        - id: close_query
+        - id: close_ticket
           type: Mutate
-          params: close_query
+          params: close_ticket
         - id: reset_selected
           type: SetState
           params:
@@ -736,11 +979,11 @@ blocks:
             selected: {}
         - id: fetch
           type: Fetch
-        - id: set_queries
+        - id: set_tickets
           type: SetState
           params:
-            open_list:
-              _request: fetch_open_queries
+            ticket:
+              _request: fetch_tickets
     blocks:
       - id: selected.confirm_close_modal_text
         type: Markdown

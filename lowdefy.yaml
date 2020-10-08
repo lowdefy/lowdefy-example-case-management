@@ -3,30 +3,30 @@ config:
     createUsers: sign_up
 
 connections:
-  - id: queries
+  - id: tickets
     type: MongoDBCollection
     properties:
       databaseUri:
         _secret: lowdefy_examples_mdb
       databaseName: example-case-management
-      collection: queries
+      collection: tickets
       write: true
 
 menus:
   - id: default
     links:
-      - id: new-query
+      - id: new-ticket
         type: MenuLink
-        pageId: new-query
+        pageId: new-ticket
         properties:
           icon: AlertOutlined
-          title: New Query
-      - id: queries
+          title: New Ticket
+      - id: tickets
         type: MenuLink
-        pageId: queries
+        pageId: tickets
         properties:
           icon: ProfileOutlined
-          title: Queries
+          title: Tickets
 global:
   statuses:
     - Investigation Started
@@ -39,7 +39,7 @@ global:
     Client Contacted: '#13c2c2'
     Awaiting Confirmation: '#7cb305'
     Escalated: '#faad14'
-    Closed: '#52c41a'
+    Closed: '#bfbfbf'
 
   actionColors:
     Created: '#722ed1'
@@ -72,5 +72,5 @@ global:
     Closed: StopOutlined
 
 pages:
-  - _ref: new-query.yaml
-  - _ref: queries.yaml
+  - _ref: new-ticket.yaml
+  - _ref: tickets.yaml
