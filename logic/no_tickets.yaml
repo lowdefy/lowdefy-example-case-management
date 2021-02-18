@@ -1,0 +1,9 @@
+_and:
+  - _eq:
+      - _array.length:
+          _if_none:
+            - _state: tickets
+            - []
+      - 0
+  - _not:
+      _ref: logic/tickets_loading.yaml

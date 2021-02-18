@@ -1,0 +1,21 @@
+id: escalate_ticket
+type: MongoDBUpdateOne
+connectionId: tickets
+properties:
+  filter:
+    _id:
+      _state: selected_id
+  update:
+    - $set:
+        updated_date:
+          _date: now
+        status: Escalated
+        history:
+          $concatArrays:
+            - $history
+            - - action: Escalated
+                status: Escalated
+                comment:
+                  _state: selected.escalate_comment
+                timestamp:
+                  _date: now

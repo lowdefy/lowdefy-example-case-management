@@ -1,0 +1,19 @@
+- id: set_flagged
+  type: Request
+  params:
+    - set_flagged
+- id: refresh
+  type: Request
+  params:
+    - fetch_tickets
+    - fetch_selected
+- id: set_state
+  type: SetState
+  params:
+    selected:
+      _get:
+        key: '0'
+        from:
+          _request: fetch_selected
+    ticket:
+      _request: fetch_tickets

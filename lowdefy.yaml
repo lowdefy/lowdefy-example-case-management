@@ -1,13 +1,13 @@
-config:
-  auth:
-    createUsers: sign_up
+name: 'lowdefy-example-case-management'
+lowdefy: '3.10.0'
+licence: MIT
 
 connections:
   - id: tickets
     type: MongoDBCollection
     properties:
       databaseUri:
-        _secret: lowdefy_examples_mdb
+        _secret: EXAMPLES_MDB
       databaseName: example-case-management
       collection: tickets
       write: true

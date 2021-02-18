@@ -1,0 +1,23 @@
+id: fetch_selected
+type: MongoDBAggregation
+connectionId: tickets
+properties:
+  pipeline:
+    - $match:
+        _id:
+          _state: selected_id
+    - $project:
+        status: 1
+        company: 1
+        name: 1
+        phone: 1
+        type: 1
+        flagged: 1
+        ticket_description: 1
+        ticket_id: 1
+        created_date: 1
+        updated_date: 1
+        satisfaction_score: 1
+        past_orders: 1
+        history:
+          $reverseArray: $history

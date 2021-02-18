@@ -1,0 +1,64 @@
+id: fetch_tickets
+type: MongoDBAggregation
+connectionId: tickets
+properties:
+  pipeline:
+    - $match:
+        $expr:
+          $and:
+            - $or:
+              - $ne:
+                  - $indexOfCP:
+                    - $toLower:
+                        $company
+                    - $toLower:
+                        $ifNull:
+                          - _state: search_input
+                          - ''
+                  - -1
+              - $ne:
+                  - $indexOfCP:
+                    - $toLower:
+                        $name
+                    - $toLower:
+                        $ifNull:
+                          - _state: search_input
+                          - ''
+                  - -1
+            - $eq:
+                - $status
+                - $ifNull:
+                    - _state: status_selector
+                    - $status
+            - $eq:
+                - $type
+                - $ifNull:
+                    - _state: type_selector
+                    - $type
+            - $cond:
+                - $eq:
+                    - _state: open_closed_selector
+                    - Closed
+                - $eq:
+                    - $status
+                    - Closed
+                - $ne:
+                    - $status
+                    - Closed
+            - $cond:
+                - $in:
+                    - Only flagged
+                    - _state: flagged_selector
+                - $flagged
+                - true
+    - $project:
+        _id: 1
+        name: 1
+        company: 1
+        status: 1
+        flagged: 1
+        created_date: 1
+        ticket_id: 1
+    - $sort:
+        flagged: -1
+        created_date: 1

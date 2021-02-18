@@ -1,0 +1,28 @@
+id: set_flagged
+type: MongoDBUpdateOne
+connectionId: tickets
+properties:
+  filter:
+    _id:
+      _state: selected_id
+  update:
+    - $set:
+        updated_date:
+          _date: now
+        flagged:
+          _not:
+            _state: selected.flagged
+        history:
+          $concatArrays:
+            - $history
+            - - action:
+                  _if:
+                    test:
+                      _eq:
+                        - _state: selected.flagged
+                        - true
+                    then: Removed flag
+                    else: Flagged
+                status: $status
+                timestamp:
+                  _date: now

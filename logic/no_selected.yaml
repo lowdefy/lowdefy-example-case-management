@@ -1,0 +1,7 @@
+_and:
+  - _not:
+      _ref: logic/ticket_selected.yaml
+  - _not:
+      _ref: logic/selected_loading.yaml
+
+

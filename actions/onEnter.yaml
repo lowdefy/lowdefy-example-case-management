@@ -1,0 +1,7 @@
+- id: init
+  type: SetState
+  params:
+    flagged_selector: []
+    open_closed_selector: Open
+    selected: {}
+    tickets_loading: true

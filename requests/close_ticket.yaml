@@ -1,0 +1,19 @@
+id: close_ticket
+type: MongoDBUpdateOne
+connectionId: tickets
+properties:
+  filter:
+    _id:
+      _state: selected_id
+  update:
+    - $set:
+        updated_date:
+          _date: now
+        status: Closed
+        history:
+          $concatArrays:
+            - $history
+            - - action: Closed ticket
+                status: Closed
+                timestamp:
+                  _date: now

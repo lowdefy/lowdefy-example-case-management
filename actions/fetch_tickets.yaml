@@ -1,0 +1,14 @@
+- id: prepare_fetch_tickets
+  type: SetState
+  params:
+    tickets_loading: true
+- id: fetch
+  type: Request
+  params:
+    - fetch_tickets
+- id: finalize_fetch_tickets
+  type: SetState
+  params:
+    tickets_loading: false
+    tickets:
+      _request: fetch_tickets

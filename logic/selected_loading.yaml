@@ -1,0 +1,3 @@
+_eq:
+  - _state: selected_loading
+  - true

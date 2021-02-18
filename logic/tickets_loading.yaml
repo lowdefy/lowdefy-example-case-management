@@ -1,0 +1,3 @@
+_eq:
+  - _state: tickets_loading
+  - true

@@ -1,0 +1,20 @@
+- id: prepare_fetch_selected
+  type: SetState
+  params:
+    selected_loading: true
+    selected: {}
+    selected_id:
+      _state: tickets.$._id
+- id: fetch_selected
+  type: Request
+  params:
+    - fetch_selected
+- id: finalize_fetch_tickets
+  type: SetState
+  params:
+    selected_loading: false
+    selected:
+      _get:
+        key: '0'
+        from:
+          _request: fetch_selected
