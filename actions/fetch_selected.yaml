@@ -1,8 +1,11 @@
 - id: prepare_fetch_selected
   type: SetState
   params:
+    # Set a flag in state to indicate the selected item is being loaded
     selected_loading: true
+    # Clear the currently selected item
     selected: {}
+    # Set the selected id that will be used by the fetch_selected request
     selected_id:
       _state: tickets.$._id
 - id: fetch_selected
@@ -12,7 +15,10 @@
 - id: finalize_fetch_tickets
   type: SetState
   params:
+    # Set the loading flag to indicate loading has completed
     selected_loading: false
+    # Set the selected ticket value to state
+    # This is so that ticket fields can be accessed using the _state operator
     selected:
       _get:
         key: '0'

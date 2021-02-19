@@ -1,3 +1,4 @@
+# Fetch the tickets
 - id: fetch_tickets
   type: Request
   params:
@@ -6,5 +7,6 @@
   type: SetState
   params:
     tickets_loading: false
+    # Set the tickets to state to populate the tickets list
     tickets:
       _request: fetch_tickets

@@ -1,6 +1,7 @@
 - id: init
   type: SetState
   params:
+    # Initialize the page state
     flagged_selector: []
     open_closed_selector: Open
     selected: {}

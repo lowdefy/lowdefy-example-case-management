@@ -1,6 +1,7 @@
 - id: prepare_fetch_tickets
   type: SetState
   params:
+    # Set a flag in state to indicate the tickets are loading
     tickets_loading: true
 - id: fetch
   type: Request
@@ -9,6 +10,8 @@
 - id: finalize_fetch_tickets
   type: SetState
   params:
+    # Set the loading flag to indicate loading has completed
     tickets_loading: false
+    # Set the tickets in state to populate the tickets list
     tickets:
       _request: fetch_tickets

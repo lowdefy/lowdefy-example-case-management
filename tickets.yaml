@@ -15,6 +15,9 @@ events:
     _ref: actions/onEnterAsync.yaml
 
 requests:
+  # Requests and actions are written in the requests/actions directories and referenced
+  # to make the files easier to read.
+  # They could also be used on multiple pages then.
   - _ref: requests/change_status_on_ticket.yaml
   - _ref: requests/close_ticket.yaml
   - _ref: requests/comment_on_ticket.yaml
@@ -24,6 +27,7 @@ requests:
   - _ref: requests/set_flagged.yaml
 
 blocks:
+  # This box contains the search box and list of tickets on the rhs of the screen
   - id: list_box
     type: Box
     layout:
@@ -49,12 +53,16 @@ blocks:
               flex: 1 1 auto
             properties:
               disabled:
+                # Logical tests that are used often are also referenced
+                # The inputs should be disabled when the tickets loading, so the user can only make one request at a time
+                # A loading state is set by the fetch_tickets action, that is used to determine if he tickets are loading
                 _ref: logic/tickets_loading.yaml
               placeholder: Search
               label:
                 disabled: true
             events:
               onPressEnter:
+                # Fetch the tickets when enter is pressed and the text input is focused
                 _ref: actions/fetch_tickets.yaml
           - id: search_button
             type: Button
@@ -140,12 +148,14 @@ blocks:
         style:
           marginTop: 4
         blocks:
+          # This Skeleton is shown when the tickets are loading
           - id: tickets_skeleton
             type: Skeleton
             visible:
               _ref: logic/tickets_loading.yaml
             properties:
               active: true
+          # This is shown when the tickets request does not return any tickets
           - id: no_tickets
             type: Result
             visible:
@@ -155,18 +165,29 @@ blocks:
                 name: ContainerTwoTone
                 color: '#bfbfbf'
               subTitle: No tickets found
+          # A list to display the list of tickets
           - id: tickets
             type: List
             visible:
               _not:
                 _ref: logic/tickets_loading.yaml
             blocks:
+              # This box is here so we can add a onClick event if the user clicks anywhere on the ticket
+              # All ids of blocks thar are part of the tickets list start with "tickets.$."
               - id: tickets.$.box
                 type: Box
                 events:
                   onClick:
                     _ref: actions/fetch_selected.yaml
                 blocks:
+                  # A box to contain the header line of the ticket display
+                  # The items inside are laid out using flex properties
+                  # The status icon, status text and flagged icon all have grow 0, shrink 1 and size auto
+                  # They will try to occupy space they size they naturally are, and shrink if possible.
+                  # The ticket id has grow 1, shrink 1 and size auto.
+                  # It will expand to take up as much space as possible , pushing the flag icon to the right
+                  # This pattern is useful when creating a row of objects that should be aligned
+                  # to both the lhs and rhs of the row
                   - id: tickets.$.header_box
                     type: Box
                     layout:
@@ -180,6 +201,7 @@ blocks:
                         properties:
                           size: 12
                           color:
+                            # Use the _get operator to get the correct icon name and color from the global maps
                             _get:
                               from:
                                 _global: statusColors
@@ -252,6 +274,7 @@ blocks:
                   - id: tickets.$.divider
                     type: Divider
                     visible:
+                      # Hide the divider if the item is the last in the list
                       _not:
                         _eq:
                           - _sum:
@@ -260,8 +283,7 @@ blocks:
                           - _array.length:
                               _state: tickets
 
-
-
+  # This box contains the ticket description on the rhs of the screen.
   - id: selected_box
     type: Box
     layout:
@@ -466,6 +488,8 @@ blocks:
                         - label: Phone
                           value:
                             _state: selected.phone
+                  # These values are created randomly when the ticket is created
+                  # The could have been looked up from some customer data though
                   - id: selected.satisfaction_box
                     type: Box
                     layout:
@@ -554,6 +578,7 @@ blocks:
                               on:
                                 _state: selected.history.$
 
+  # Modals that are opened by the action buttons
   - id: selected.change_status_modal
     type: Modal
     properties:

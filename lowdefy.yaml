@@ -1,5 +1,5 @@
 name: 'lowdefy-example-case-management'
-lowdefy: '3.10.0'
+lowdefy: '3.10.1'
 licence: MIT
 
 connections:
@@ -33,6 +33,7 @@ global:
     - Client Contacted
     - Awaiting Confirmation
 
+  # Maps of colors and icons for statuses and actions
   statusColors:
     New: '#722ed1'
     Investigation Started: '#1890ff'
