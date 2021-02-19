@@ -6,19 +6,18 @@ properties:
     _id:
       _state: selected_id
   update:
-    - $set:
-        updated_date:
-          _date: now
+    $set:
+      updated_date:
+        _date: now
+      status:
+        _state: selected.change_status_selector
+    $push:
+      history:
+        action:
+          _nunjucks: Changed status to {{ selected.change_status_selector }}
         status:
           _state: selected.change_status_selector
-        history:
-          $concatArrays:
-            - $history
-            - - action:
-                  _nunjucks: Changed status to {{ selected.change_status_selector }}
-                status:
-                  _state: selected.change_status_selector
-                comment:
-                  _state: selected.change_status_comment
-                timestamp:
-                  _date: now
+        comment:
+          _state: selected.change_status_comment
+        timestamp:
+          _date: now

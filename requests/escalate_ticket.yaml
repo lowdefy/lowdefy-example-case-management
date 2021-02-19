@@ -6,16 +6,15 @@ properties:
     _id:
       _state: selected_id
   update:
-    - $set:
-        updated_date:
-          _date: now
+    $set:
+      updated_date:
+        _date: now
+      status: Escalated
+    $push:
+      history:
+        action: Escalated
         status: Escalated
-        history:
-          $concatArrays:
-            - $history
-            - - action: Escalated
-                status: Escalated
-                comment:
-                  _state: selected.escalate_comment
-                timestamp:
-                  _date: now
+        comment:
+          _state: selected.escalate_comment
+        timestamp:
+          _date: now

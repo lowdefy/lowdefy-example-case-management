@@ -6,15 +6,14 @@ properties:
     _id:
       _state: selected_id
   update:
-    - $set:
-        updated_date:
+    $set:
+      updated_date:
+        _date: now
+    $push:
+      history:
+        action: Commented
+        status: $status
+        comment:
+          _state: selected.comment_input
+        timestamp:
           _date: now
-        history:
-          $concatArrays:
-            - $history
-            - - action: Commented
-                status: $status
-                comment:
-                  _state: selected.comment_input
-                timestamp:
-                  _date: now

@@ -6,14 +6,13 @@ properties:
     _id:
       _state: selected_id
   update:
-    - $set:
-        updated_date:
-          _date: now
+    $set:
+      updated_date:
+        _date: now
+      status: Closed
+    $push:
+      history:
+        action: Closed ticket
         status: Closed
-        history:
-          $concatArrays:
-            - $history
-            - - action: Closed ticket
-                status: Closed
-                timestamp:
-                  _date: now
+        timestamp:
+          _date: now
