@@ -47,6 +47,25 @@ requests:
 
 
 areas:
+  header:
+    blocks:
+      - id: affix
+        type: Affix
+        blocks:
+          - id: source_button
+            type: Button
+            properties:
+              icon: GithubOutlined
+              title: View App Source Code
+              type: default
+              shape: round
+            events:
+              onClick:
+                - id: link_repo
+                  type: Link
+                  params:
+                    url: https://github.com/lowdefy/lowdefy-example-case-management
+                    newTab: true
   content:
     justify: center
     blocks:

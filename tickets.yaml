@@ -26,6 +26,27 @@ requests:
   - _ref: requests/fetch_selected.yaml
   - _ref: requests/set_flagged.yaml
 
+areas:
+  header:
+    blocks:
+      - id: affix
+        type: Affix
+        blocks:
+          - id: source_button
+            type: Button
+            properties:
+              icon: GithubOutlined
+              title: View App Source Code
+              type: default
+              shape: round
+            events:
+              onClick:
+                - id: link_repo
+                  type: Link
+                  params:
+                    url: https://github.com/lowdefy/lowdefy-example-case-management
+                    newTab: true
+
 blocks:
   # This box contains the search box and list of tickets on the rhs of the screen
   - id: list_box
