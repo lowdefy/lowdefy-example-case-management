@@ -15,18 +15,19 @@ connections:
 menus:
   - id: default
     links:
-      - id: new-ticket
-        type: MenuLink
-        pageId: new-ticket
-        properties:
-          icon: AlertOutlined
-          title: New Ticket
       - id: tickets
         type: MenuLink
         pageId: tickets
         properties:
           icon: ProfileOutlined
           title: Tickets
+      - id: new-ticket
+        type: MenuLink
+        pageId: new-ticket
+        properties:
+          icon: AlertOutlined
+          title: New Ticket
+
 global:
   statuses:
     - Investigation Started
@@ -73,5 +74,5 @@ global:
     Closed: StopOutlined
 
 pages:
-  - _ref: new-ticket.yaml
   - _ref: tickets.yaml
+  - _ref: new-ticket.yaml
