@@ -13,5 +13,5 @@
     # Set the loading flag to indicate loading has completed
     tickets_loading: false
     # Set the tickets in state to populate the tickets list
-    tickets:
+    tickets_list:
       _request: fetch_tickets

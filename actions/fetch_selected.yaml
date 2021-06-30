@@ -7,12 +7,12 @@
     selected: {}
     # Set the selected id that will be used by the fetch_selected request
     selected_id:
-      _state: tickets.$._id
+      _state: tickets_list.$._id
 - id: fetch_selected
   type: Request
   params:
     - fetch_selected
-- id: finalize_fetch_tickets
+- id: finalize_fetch_selected
   type: SetState
   params:
     # Set the loading flag to indicate loading has completed
@@ -20,7 +20,4 @@
     # Set the selected ticket value to state
     # This is so that ticket fields can be accessed using the _state operator
     selected:
-      _get:
-        key: '0'
-        from:
-          _request: fetch_selected
+      _request: fetch_selected.0

@@ -11,10 +11,6 @@
   type: SetState
   params:
     selected:
-      _get:
-        key: '0'
-        from:
-          _request: fetch_selected
-    tickets:
+      _request: fetch_selected.0
+    tickets_list:
       _request: fetch_tickets
-

@@ -48,7 +48,7 @@ areas:
                     newTab: true
 
 blocks:
-  # This box contains the search box and list of tickets on the rhs of the screen
+  #   # This box contains the search box and list of tickets on the rhs of the screen
   - id: list_box
     type: Box
     layout:
@@ -62,7 +62,7 @@ blocks:
           properties:
             lines: 1
         properties:
-          content: "###### Tickets"
+          content: '###### Tickets'
       - id: search_box
         type: Box
         layout:
@@ -145,8 +145,7 @@ blocks:
           options:
             - Open
             - Closed
-          size:
-            small
+          size: small
         events:
           onChange:
             _ref: actions/fetch_tickets.yaml
@@ -187,15 +186,15 @@ blocks:
                 color: '#bfbfbf'
               subTitle: No tickets found
           # A list to display the list of tickets
-          - id: tickets
+          - id: tickets_list
             type: List
             visible:
               _not:
                 _ref: logic/tickets_loading.yaml
             blocks:
               # This box is here so we can add a onClick event if the user clicks anywhere on the ticket
-              # All ids of blocks thar are part of the tickets list start with "tickets.$."
-              - id: tickets.$.box
+              # All ids of blocks that are part of the tickets list start with "tickets_list.$."
+              - id: tickets_list.$.box
                 type: Box
                 events:
                   onClick:
@@ -209,13 +208,13 @@ blocks:
                   # It will expand to take up as much space as possible , pushing the flag icon to the right
                   # This pattern is useful when creating a row of objects that should be aligned
                   # to both the lhs and rhs of the row
-                  - id: tickets.$.header_box
+                  - id: tickets_list.$.header_box
                     type: Box
                     layout:
                       contentAlign: middle
                       contentGutter: 16
                     blocks:
-                      - id: tickets.$.status_icon
+                      - id: tickets_list.$.status_icon
                         type: Icon
                         layout:
                           flex: 0 1 auto
@@ -227,14 +226,14 @@ blocks:
                               from:
                                 _global: statusColors
                               key:
-                                _state: tickets.$.status
+                                _state: tickets_list.$.status
                           name:
                             _get:
                               from:
                                 _global: statusIcons
                               key:
-                                _state: tickets.$.status
-                      - id: tickets.$.status
+                                _state: tickets_list.$.status
+                      - id: tickets_list.$.status
                         type: Html
                         layout:
                           flex: 0 1 auto
@@ -246,8 +245,8 @@ blocks:
                                   {{ status }}
                                 </font>
                               on:
-                                _state: tickets.$
-                      - id: tickets.$.ticket_id
+                                _state: tickets_list.$
+                      - id: tickets_list.$.ticket_id
                         type: Html
                         layout:
                           flex: 1 1 auto
@@ -259,8 +258,8 @@ blocks:
                                   <b>#{{ ticket_id }}</b>
                                 </font>
                               on:
-                                _state: tickets.$
-                      - id: tickets.$.flag
+                                _state: tickets_list.$
+                      - id: tickets_list.$.flag
                         type: Icon
                         layout:
                           flex: 0 1 auto
@@ -271,11 +270,11 @@ blocks:
                             _if:
                               test:
                                 _eq:
-                                  - _state: tickets.$.flagged
+                                  - _state: tickets_list.$.flagged
                                   - true
                               then: '#f5222d'
                               else: '#bfbfbf'
-                  - id: tickets.$.description
+                  - id: tickets_list.$.description
                     type: Html
                     properties:
                       html:
@@ -291,8 +290,8 @@ blocks:
                             </p>
                             <font style="font-size: 10px;" ><i>Created: {{ created_date | date("lll") }} {{ created_user.name }}</i></font>
                           on:
-                            _state: tickets.$
-                  - id: tickets.$.divider
+                            _state: tickets_list.$
+                  - id: tickets_list.$.divider
                     type: Divider
                     visible:
                       # Hide the divider if the item is the last in the list
@@ -302,7 +301,7 @@ blocks:
                               - _index: 0
                               - 1
                           - _array.length:
-                              _state: tickets
+                              _state: tickets_list
 
   # This box contains the ticket description on the rhs of the screen.
   - id: selected_box
@@ -317,7 +316,7 @@ blocks:
           properties:
             lines: 1
         properties:
-          content: "###### Selected"
+          content: '###### Selected'
       - id: selected.card
         type: Card
         style:
@@ -521,7 +520,7 @@ blocks:
                       - id: selected.satisfaction_title
                         type: Markdown
                         properties:
-                          content: "###### Satisfaction score"
+                          content: '###### Satisfaction score'
                       - id: selected.satisfaction_score
                         type: Progress
                         properties:
@@ -534,7 +533,7 @@ blocks:
                       - id: selected.satisfaction_title
                         type: Markdown
                         properties:
-                          content: "###### Past orders"
+                          content: '###### Past orders'
                       - id: selected.past_orders
                         type: Statistic
                         properties:
@@ -616,17 +615,15 @@ blocks:
           params: change_status_on_ticket
         - id: refresh
           type: Request
+          params:
             - fetch_tickets
             - fetch_selected
         - id: set_state
           type: SetState
           params:
             selected:
-              _get:
-                key: '0'
-                from:
-                  _request: fetch_selected
-            ticket:
+              _request: fetch_selected.0
+            tickets_list:
               _request: fetch_tickets
     blocks:
       - id: selected.change_status_title
@@ -634,7 +631,7 @@ blocks:
         style:
           marginBottom: 16px
         properties:
-          content: "#### Change Status"
+          content: '#### Change Status'
       - id: selected.change_status_selector
         type: Selector
         required: true
@@ -662,17 +659,15 @@ blocks:
           params: comment_on_ticket
         - id: refresh
           type: Request
+          params:
             - fetch_tickets
             - fetch_selected
         - id: set_state
           type: SetState
           params:
             selected:
-              _get:
-                key: '0'
-                from:
-                  _request: fetch_selected
-            ticket:
+              _request: fetch_selected.0
+            tickets_list:
               _request: fetch_tickets
     blocks:
       - id: selected.comment_modal_title
@@ -680,7 +675,7 @@ blocks:
         style:
           marginBottom: 16px
         properties:
-          content: "#### Comment"
+          content: '#### Comment'
       - id: selected.comment_input
         type: TextArea
         required: true
@@ -703,17 +698,15 @@ blocks:
           params: escalate_ticket
         - id: refresh
           type: Request
+          params:
             - fetch_tickets
             - fetch_selected
         - id: set_state
           type: SetState
           params:
             selected:
-              _get:
-                key: '0'
-                from:
-                  _request: fetch_selected
-            ticket:
+              _request: fetch_selected.0
+            tickets_list:
               _request: fetch_tickets
     blocks:
       - id: selected.comment_modal_title
@@ -721,7 +714,7 @@ blocks:
         style:
           marginBottom: 16px
         properties:
-          content: "#### Escalate ticket"
+          content: '#### Escalate ticket'
       - id: selected.escalate_comment
         type: TextArea
         required: true
@@ -745,15 +738,15 @@ blocks:
             selected: {}
         - id: refresh
           type: Request
+          params:
             - fetch_tickets
-            - fetch_selected
         - id: set_tickets
           type: SetState
           params:
-            ticket:
+            tickets_list:
               _request: fetch_tickets
     blocks:
       - id: selected.confirm_close_modal_text
         type: Markdown
         properties:
-          content: "#### Are you sure you want to close this issue?"
+          content: '#### Are you sure you want to close this issue?'

@@ -8,5 +8,5 @@
   params:
     tickets_loading: false
     # Set the tickets to state to populate the tickets list
-    tickets:
+    tickets_list:
       _request: fetch_tickets

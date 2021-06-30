@@ -2,7 +2,7 @@ _and:
   - _eq:
       - _array.length:
           _if_none:
-            - _state: tickets
+            - _state: tickets_list
             - []
       - 0
   - _not:
