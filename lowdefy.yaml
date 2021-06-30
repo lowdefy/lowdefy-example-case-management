@@ -1,5 +1,5 @@
 name: 'lowdefy-example-case-management'
-lowdefy: '3.10.1'
+lowdefy: '3.18.1'
 licence: MIT
 
 connections:
