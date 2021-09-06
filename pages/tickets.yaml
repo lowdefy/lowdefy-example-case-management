@@ -603,6 +603,7 @@ blocks:
     type: Modal
     properties:
       okText: Change Status
+      title: Change Status
     events:
       onOk:
         - id: validate
@@ -626,12 +627,6 @@ blocks:
             tickets_list:
               _request: fetch_tickets
     blocks:
-      - id: selected.change_status_title
-        type: Markdown
-        style:
-          marginBottom: 16px
-        properties:
-          content: '#### Change Status'
       - id: selected.change_status_selector
         type: Selector
         required: true
@@ -647,6 +642,7 @@ blocks:
     type: Modal
     properties:
       okText: Save
+      title: Comment
     events:
       onOk:
         - id: validate
@@ -670,12 +666,6 @@ blocks:
             tickets_list:
               _request: fetch_tickets
     blocks:
-      - id: selected.comment_modal_title
-        type: Markdown
-        style:
-          marginBottom: 16px
-        properties:
-          content: '#### Comment'
       - id: selected.comment_input
         type: TextArea
         required: true
@@ -686,6 +676,7 @@ blocks:
     type: Modal
     properties:
       okText: Escalate
+      title: Escalate ticket
     events:
       onOk:
         - id: validate
@@ -709,12 +700,6 @@ blocks:
             tickets_list:
               _request: fetch_tickets
     blocks:
-      - id: selected.comment_modal_title
-        type: Markdown
-        style:
-          marginBottom: 16px
-        properties:
-          content: '#### Escalate ticket'
       - id: selected.escalate_comment
         type: TextArea
         required: true
