@@ -1,43 +1,52 @@
 id: fetch_tickets
 type: MongoDBAggregation
 connectionId: tickets
+payload:
+  search_input:
+    _state: search_input
+  status_selector:
+    _state: status_selector
+  type_selector:
+    _state: type_selector
+  open_closed_selector:
+    _state: open_closed_selector
+  flagged_selector:
+    _state: flagged_selector
 properties:
   pipeline:
     - $match:
         $expr:
           $and:
             - $or:
-              - $ne:
-                  - $indexOfCP:
-                    - $toLower:
-                        $company
-                    - $toLower:
-                        $ifNull:
-                          - _state: search_input
-                          - ''
-                  - -1
-              - $ne:
-                  - $indexOfCP:
-                    - $toLower:
-                        $name
-                    - $toLower:
-                        $ifNull:
-                          - _state: search_input
-                          - ''
-                  - -1
+                - $ne:
+                    - $indexOfCP:
+                        - $toLower: $company
+                        - $toLower:
+                            $ifNull:
+                              - _payload: search_input
+                              - ''
+                    - -1
+                - $ne:
+                    - $indexOfCP:
+                        - $toLower: $name
+                        - $toLower:
+                            $ifNull:
+                              - _payload: search_input
+                              - ''
+                    - -1
             - $eq:
                 - $status
                 - $ifNull:
-                    - _state: status_selector
+                    - _payload: status_selector
                     - $status
             - $eq:
                 - $type
                 - $ifNull:
-                    - _state: type_selector
+                    - _payload: type_selector
                     - $type
             - $cond:
                 - $eq:
-                    - _state: open_closed_selector
+                    - _payload: open_closed_selector
                     - Closed
                 - $eq:
                     - $status
@@ -48,7 +57,7 @@ properties:
             - $cond:
                 - $in:
                     - Only flagged
-                    - _state: flagged_selector
+                    - _payload: flagged_selector
                 - $flagged
                 - true
     - $project:

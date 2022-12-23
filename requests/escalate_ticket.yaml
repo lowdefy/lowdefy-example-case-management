@@ -1,10 +1,15 @@
 id: escalate_ticket
 type: MongoDBUpdateOne
 connectionId: tickets
+payload:
+  id:
+    _state: selected_id
+  comment:
+    _state: selected.escalate_comment
 properties:
   filter:
     _id:
-      _state: selected_id
+      _payload: id
   update:
     $set:
       updated_date:
@@ -15,6 +20,6 @@ properties:
         action: Escalated
         status: Escalated
         comment:
-          _state: selected.escalate_comment
+          _payload: comment
         timestamp:
           _date: now

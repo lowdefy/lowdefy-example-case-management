@@ -1,10 +1,15 @@
 id: comment_on_ticket
 type: MongoDBUpdateOne
 connectionId: tickets
+payload:
+  id:
+    _state: selected_id
+  comment:
+    _state: selected.comment_input
 properties:
   filter:
     _id:
-      _state: selected_id
+      _payload: id
   update:
     $set:
       updated_date:
@@ -14,6 +19,6 @@ properties:
         action: Commented
         status: $status
         comment:
-          _state: selected.comment_input
+          _payload: comment
         timestamp:
           _date: now

@@ -10,11 +10,14 @@ requests:
   - id: insert_ticket
     type: MongoDBInsertOne
     connectionId: tickets
+    payload:
+      state:
+        _state: true
     properties:
       doc:
         # Use _object.assign to create a new object with all the values from state, and some extra fields
         _object.assign:
-          - _state: true
+          - _payload: state
           - created_date:
               _date: now
             updated_date:
@@ -43,8 +46,6 @@ requests:
                 type: integer
                 max: 999999
                 min: 100000
-
-
 
 areas:
   header:
@@ -79,7 +80,7 @@ areas:
         blocks:
           - id: ticket_title
             type: Title
-            loading:
+            skeleton:
               type: Skeleton
               properties:
                 height: 30px
@@ -89,7 +90,7 @@ areas:
           - id: name
             type: TextInput
             required: true
-            loading:
+            skeleton:
               # Set loading properties, since large inputs are used, and the default loading is too small
               type: SkeletonInput
               properties:
@@ -100,7 +101,7 @@ areas:
           - id: company
             type: AutoComplete
             required: true
-            loading:
+            skeleton:
               type: SkeletonInput
               properties:
                 size: large
@@ -114,7 +115,7 @@ areas:
           - id: phone
             type: TextInput
             required: true
-            loading:
+            skeleton:
               type: SkeletonInput
               properties:
                 size: large
@@ -124,7 +125,7 @@ areas:
           - id: type
             type: Selector
             required: true
-            loading:
+            skeleton:
               type: SkeletonInput
               properties:
                 size: large
@@ -139,7 +140,7 @@ areas:
           - id: ticket_description
             type: TextArea
             required: true
-            loading:
+            skeleton:
               type: SkeletonInput
               properties:
                 inputHeight: 80px
@@ -150,7 +151,7 @@ areas:
             type: Button
             style:
               marginTop: 8
-            loading:
+            skeleton:
               type: SkeletonButton
               properties:
                 size: large
