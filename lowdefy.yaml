@@ -1,5 +1,5 @@
 name: 'lowdefy-example-case-management'
-lowdefy: '3.18.1'
+lowdefy: '4.0.0-alpha.37'
 licence: MIT
 
 connections:
@@ -55,23 +55,23 @@ global:
     Closed: '#52c41a'
 
   statusIcons:
-    New: PlusCircleTwoTone
-    Escalated: ExclamationCircleOutlined
-    Investigation Started: ToolTwoTone
-    Client Contacted: SoundTwoTone
-    Awaiting Confirmation: LikeOutlined
-    Closed: StopOutlined
+    New: AiTwotonePlusCircle
+    Escalated: AiOutlineExclamationCircle
+    Investigation Started: AiTwotoneTool
+    Client Contacted: AiTwotoneSound
+    Awaiting Confirmation: AiOutlineLike
+    Closed: AiOutlineStop
 
   actionIcons:
-    Created: PlusCircleTwoTone
-    Changed status to Investigation Started: ToolTwoTone
-    Changed status to Client Contacted: SoundTwoTone
-    Changed status to Awaiting Confirmation: LikeOutlined
-    Escalated: ExclamationCircleOutlined
-    Flagged: FlagTwoTone
-    Removed flag: FlagTwoTone
-    Commented: MessageTwoTone
-    Closed: StopOutlined
+    Created: AiTwotonePlusCircle
+    Changed status to Investigation Started: AiTwotoneTool
+    Changed status to Client Contacted: AiTwotoneSound
+    Changed status to Awaiting Confirmation: AiOutlineLike
+    Escalated: AiOutlineExclamationCircle
+    Flagged: AiTwotoneFlag
+    Removed flag: AiTwotoneFlag
+    Commented: AiTwotoneMessage
+    Closed: AiOutlineStop
 
 pages:
   - _ref: tickets.yaml

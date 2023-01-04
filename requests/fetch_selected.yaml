@@ -1,11 +1,14 @@
 id: fetch_selected
 type: MongoDBAggregation
 connectionId: tickets
+payload:
+  id:
+    _state: selected_id
 properties:
   pipeline:
     - $match:
         _id:
-          _state: selected_id
+          _payload: id
     - $project:
         status: 1
         company: 1

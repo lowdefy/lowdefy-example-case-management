@@ -1,23 +1,34 @@
 id: change_status_on_ticket
 type: MongoDBUpdateOne
 connectionId: tickets
+payload:
+  id:
+    _state: selected_id
+  status:
+    _state: selected.change_status_selector
+  comment:
+    _state: selected.change_status_comment
 properties:
   filter:
     _id:
-      _state: selected_id
+      _payload: id
   update:
     $set:
       updated_date:
         _date: now
       status:
-        _state: selected.change_status_selector
+        _payload: status
     $push:
       history:
         action:
-          _nunjucks: Changed status to {{ selected.change_status_selector }}
+          _nunjucks:
+            on:
+              status:
+                _payload: status
+            template: 'Changed status to {{ status }}'
         status:
-          _state: selected.change_status_selector
+          _payload: status
         comment:
-          _state: selected.change_status_comment
+          _payload: comment
         timestamp:
           _date: now

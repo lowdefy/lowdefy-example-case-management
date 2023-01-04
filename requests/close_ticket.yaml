@@ -1,10 +1,13 @@
 id: close_ticket
 type: MongoDBUpdateOne
 connectionId: tickets
+payload:
+  id:
+    _state: selected_id
 properties:
   filter:
     _id:
-      _state: selected_id
+      _payload: id
   update:
     $set:
       updated_date:

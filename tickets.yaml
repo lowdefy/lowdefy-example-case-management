@@ -9,10 +9,10 @@ layout:
   contentGutter: 16
 
 events:
-  onEnter:
-    _ref: actions/onEnter.yaml
-  onEnterAsync:
-    _ref: actions/onEnterAsync.yaml
+  onMount:
+    _ref: actions/onMount.yaml
+  onMountAsync:
+    _ref: actions/onMountAsync.yaml
 
 requests:
   # Requests and actions are written in the requests/actions directories and referenced
@@ -57,7 +57,7 @@ blocks:
     blocks:
       - id: open_title
         type: Markdown
-        loading:
+        skeleton:
           type: SkeletonParagraph
           properties:
             lines: 1
@@ -311,7 +311,7 @@ blocks:
     blocks:
       - id: selected.title
         type: Markdown
-        loading:
+        skeleton:
           type: SkeletonParagraph
           properties:
             lines: 1
