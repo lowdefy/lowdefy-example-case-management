@@ -56,7 +56,7 @@ areas:
           - id: source_button
             type: Button
             properties:
-              icon: GithubOutlined
+              icon: AiOutlineGithub
               title: View App Source Code
               type: default
               shape: round
@@ -80,31 +80,18 @@ areas:
         blocks:
           - id: ticket_title
             type: Title
-            skeleton:
-              type: Skeleton
-              properties:
-                height: 30px
             properties:
               content: New query
               level: 2
           - id: name
             type: TextInput
             required: true
-            skeleton:
-              # Set loading properties, since large inputs are used, and the default loading is too small
-              type: SkeletonInput
-              properties:
-                size: large
             properties:
               title: Name
               size: large
           - id: company
             type: AutoComplete
             required: true
-            skeleton:
-              type: SkeletonInput
-              properties:
-                size: large
             properties:
               title: Company
               size: large
@@ -115,20 +102,12 @@ areas:
           - id: phone
             type: TextInput
             required: true
-            skeleton:
-              type: SkeletonInput
-              properties:
-                size: large
             properties:
               title: Phone
               size: large
           - id: type
             type: Selector
             required: true
-            skeleton:
-              type: SkeletonInput
-              properties:
-                size: large
             properties:
               title: Ticket type
               size: large
@@ -140,10 +119,6 @@ areas:
           - id: ticket_description
             type: TextArea
             required: true
-            skeleton:
-              type: SkeletonInput
-              properties:
-                inputHeight: 80px
             properties:
               title: Ticket description
               size: large
@@ -151,10 +126,6 @@ areas:
             type: Button
             style:
               marginTop: 8
-            skeleton:
-              type: SkeletonButton
-              properties:
-                size: large
             properties:
               title: Submit
               size: large

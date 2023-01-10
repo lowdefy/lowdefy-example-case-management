@@ -35,7 +35,7 @@ areas:
           - id: source_button
             type: Button
             properties:
-              icon: GithubOutlined
+              icon: AiOutlineGithub
               title: View App Source Code
               type: default
               shape: round
@@ -93,7 +93,7 @@ blocks:
               disabled:
                 _ref: logic/tickets_loading.yaml
               title: Search
-              icon: SearchOutlined
+              icon: AiOutlineSearch
             events:
               onClick:
                 _ref: actions/fetch_tickets.yaml
@@ -165,16 +165,18 @@ blocks:
             _ref: actions/fetch_tickets.yaml
       - id: open_card
         type: Card
+        # This Skeleton is shown when the tickets are loading
+        loading:
+          _ref: logic/tickets_loading.yaml
+        skeleton:
+          type: Card
+          blocks:
+            - type: Skeleton
+              properties:
+                height: 220
         style:
           marginTop: 4
         blocks:
-          # This Skeleton is shown when the tickets are loading
-          - id: tickets_skeleton
-            type: Skeleton
-            visible:
-              _ref: logic/tickets_loading.yaml
-            properties:
-              active: true
           # This is shown when the tickets request does not return any tickets
           - id: no_tickets
             type: Result
@@ -182,15 +184,12 @@ blocks:
               _ref: logic/no_tickets.yaml
             properties:
               icon:
-                name: ContainerTwoTone
+                name: AiOutlineContainer
                 color: '#bfbfbf'
               subTitle: No tickets found
           # A list to display the list of tickets
           - id: tickets_list
             type: List
-            visible:
-              _not:
-                _ref: logic/tickets_loading.yaml
             blocks:
               # This box is here so we can add a onClick event if the user clicks anywhere on the ticket
               # All ids of blocks that are part of the tickets list start with "tickets_list.$."
@@ -265,7 +264,7 @@ blocks:
                           flex: 0 1 auto
                         properties:
                           size: 12
-                          name: FlagTwoTone
+                          name: AiOutlineFlag
                           color:
                             _if:
                               test:
@@ -311,6 +310,8 @@ blocks:
     blocks:
       - id: selected.title
         type: Markdown
+        loading:
+          _ref: logic/selected_loading.yaml
         skeleton:
           type: SkeletonParagraph
           properties:
@@ -319,6 +320,14 @@ blocks:
           content: '###### Selected'
       - id: selected.card
         type: Card
+        loading:
+          _ref: logic/selected_loading.yaml
+        skeleton:
+          type: Card
+          blocks:
+            - type: Skeleton
+              properties:
+                height: 220
         style:
           marginTop: 4
         blocks:
@@ -334,7 +343,7 @@ blocks:
               _ref: logic/no_selected.yaml
             properties:
               icon:
-                name: ContainerTwoTone
+                name: AiOutlineContainer
                 color: '#bfbfbf'
               subTitle: No ticket selected
           - id: selected.visible_box
@@ -400,7 +409,7 @@ blocks:
                       flex: 0 1 auto
                     properties:
                       size: 32
-                      name: FlagTwoTone
+                      name: AiOutlineFlag
                       color:
                         _if:
                           test:
@@ -425,7 +434,7 @@ blocks:
                       title: Change Status
                       block: true
                       type: default
-                      icon: RetweetOutlined
+                      icon: AiOutlineRetweet
                     events:
                       onClick:
                         - id: open_change_status_modal
@@ -441,7 +450,7 @@ blocks:
                       title: Comment
                       block: true
                       type: default
-                      icon: MessageOutlined
+                      icon: AiOutlineMessage
                     events:
                       onClick:
                         - id: open_comment_modal
@@ -457,7 +466,7 @@ blocks:
                       title: Escalate
                       block: true
                       type: default
-                      icon: ExclamationCircleOutlined
+                      icon: AiOutlineExclamationCircle
                     events:
                       onClick:
                         - id: open_escalate_modal
@@ -477,7 +486,7 @@ blocks:
                       title: Close
                       block: true
                       type: default
-                      icon: StopOutlined
+                      icon: AiOutlineStop
                     events:
                       onClick:
                         - id: open_confirm_close_modal
@@ -537,7 +546,7 @@ blocks:
                       - id: selected.past_orders
                         type: Statistic
                         properties:
-                          suffixIcon: ShoppingCartOutlined
+                          suffixIcon: AiOutlineShoppingCart
                           value:
                             _state: selected.past_orders
                   - id: selected.ticket_description
