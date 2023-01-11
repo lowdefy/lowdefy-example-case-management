@@ -1,0 +1,141 @@
+id: results_card
+type: Card
+# This Skeleton is shown when the tickets are loading
+loading:
+  _ref: pages/tickets/logic/tickets_loading.yaml
+skeleton:
+  type: Card
+  blocks:
+    - type: Skeleton
+      properties:
+        height: 220
+style:
+  marginTop: 4
+blocks:
+  # This is shown when the tickets request does not return any tickets
+  - id: no_tickets
+    type: Result
+    visible:
+      _ref: pages/tickets/logic/no_tickets.yaml
+    properties:
+      icon:
+        name: AiOutlineContainer
+        color: '#bfbfbf'
+      subTitle: No tickets found
+  # A list to display the list of tickets
+  - id: tickets_list
+    type: List
+    visible:
+      _not:
+        _ref: pages/tickets/logic/tickets_loading.yaml
+    blocks:
+      # This box is here so we can add a onClick event if the user clicks anywhere on the ticket
+      # All ids of blocks that are part of the tickets list start with "tickets_list.$."
+      - id: tickets_list.$.box
+        type: Box
+        events:
+          onClick:
+            _ref: pages/tickets/actions/fetch_selected.yaml
+        blocks:
+          # A box to contain the header line of the ticket display
+          # The items inside are laid out using flex properties
+          # The status icon, status text and flagged icon all have grow 0, shrink 1 and size auto
+          # They will try to occupy space they size they naturally are, and shrink if possible.
+          # The ticket id has grow 1, shrink 1 and size auto.
+          # It will expand to take up as much space as possible , pushing the flag icon to the right
+          # This pattern is useful when creating a row of objects that should be aligned
+          # to both the lhs and rhs of the row
+          - id: tickets_list.$.header_box
+            type: Box
+            layout:
+              contentAlign: middle
+              contentGutter: 16
+            blocks:
+              - id: tickets_list.$.status_icon
+                type: Icon
+                layout:
+                  flex: 0 1 auto
+                properties:
+                  size: 12
+                  color:
+                    # Use the _get operator to get the correct icon name and color from the global maps
+                    _get:
+                      from:
+                        _global: statusColors
+                      key:
+                        _state: tickets_list.$.status
+                  name:
+                    _get:
+                      from:
+                        _global: statusIcons
+                      key:
+                        _state: tickets_list.$.status
+              - id: tickets_list.$.status
+                type: Html
+                layout:
+                  flex: 0 1 auto
+                properties:
+                  html:
+                    _nunjucks:
+                      template: |
+                        <font style='font-size:12px' >
+                          {{ status }}
+                        </font>
+                      on:
+                        _state: tickets_list.$
+              - id: tickets_list.$.ticket_id
+                type: Html
+                layout:
+                  flex: 1 1 auto
+                properties:
+                  html:
+                    _nunjucks:
+                      template: |
+                        <font style='font-size:14px' >
+                          <b>#{{ ticket_id }}</b>
+                        </font>
+                      on:
+                        _state: tickets_list.$
+              - id: tickets_list.$.flag
+                type: Icon
+                layout:
+                  flex: 0 1 auto
+                properties:
+                  size: 12
+                  name: AiOutlineFlag
+                  color:
+                    _if:
+                      test:
+                        _eq:
+                          - _state: tickets_list.$.flagged
+                          - true
+                      then: '#f5222d'
+                      else: '#bfbfbf'
+          - id: tickets_list.$.description
+            type: Html
+            properties:
+              html:
+                _nunjucks:
+                  template: |
+                    <p>
+                      <font style='font-size:14px' >
+                          <b>{{ company }}</b>
+                      </font>
+                      <font style='font-size:12px' >
+                        {{ name }}
+                      </font>
+                    </p>
+                    <font style="font-size: 10px;" ><i>Created: {{ created_date | date("lll") }} {{ created_user.name }}</i></font>
+                  on:
+                    _state: tickets_list.$
+          - id: tickets_list.$.divider
+            type: Divider
+            visible:
+              # Hide the divider if the item is the last in the list
+              _not:
+                _eq:
+                  - _sum:
+                      - _index: 0
+                      - 1
+                  - _array.length:
+                      _state: tickets_list

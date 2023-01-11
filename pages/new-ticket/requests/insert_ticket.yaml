@@ -1,0 +1,40 @@
+# insert new ticket to MongoDB
+id: insert_ticket
+type: MongoDBInsertOne
+connectionId: tickets
+payload:
+  state:
+    _state: true
+properties:
+  doc:
+    # Use _object.assign to create a new object with all the values from state, and some extra fields
+    _object.assign:
+      - _payload: state
+      - created_date:
+          _date: now
+        updated_date:
+          _date: now
+        status: New
+        # This is an array of all the actions that have been taken with the ticket
+        history:
+          - action: Created
+            status: New
+            timestamp:
+              _date: now
+        # These are randomly generated numbers to look pretty in the UI on the tickets page.
+        # These might have been looked up from other data regarding the customer.
+        satisfaction_score:
+          _random:
+            type: integer
+            max: 100
+            min: 20
+        past_orders:
+          _random:
+            type: integer
+            max: 40
+            min: 0
+        ticket_id:
+          _random:
+            type: integer
+            max: 999999
+            min: 100000

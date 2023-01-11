@@ -6,4 +6,4 @@ _and:
             - []
       - 0
   - _not:
-      _ref: logic/tickets_loading.yaml
+      _ref: pages/tickets/logic/tickets_loading.yaml

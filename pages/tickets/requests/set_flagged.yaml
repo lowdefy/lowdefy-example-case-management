@@ -9,21 +9,21 @@ payload:
 properties:
   filter:
     _id:
-      _payload: selected_id
+      _payload: id
   update:
     $set:
       updated_date:
         _date: now
       flagged:
         _not:
-          _payload: selected.flagged
+          _payload: flagged
     $push:
       history:
         action:
           _if:
             test:
               _eq:
-                - _payload: selected.flagged
+                - _payload: flagged
                 - true
             then: Removed flag
             else: Flagged
