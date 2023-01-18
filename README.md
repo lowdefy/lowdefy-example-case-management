@@ -17,7 +17,7 @@ The main purpose of this example is to show what types of apps can be built with
     - You can read more about the [Lowdefy MongoDB connector](https://docs.lowdefy.com/MongoDB).
 - Clone this repository.
 - Create a `.env` file in your project folder and set your MongoDB database connector URI as a variable in the `.env` file: `LOWDEFY_SECRET_EXAMPLES_MDB="{{ your_mongodb_connection_uri }}"`
-- In the command console, navigate to your project folder and run the Lowdefy CLI: `pnpx lowdefy@4.0.0-alpha.37 dev`.
+- In the command console, navigate to your project folder and run the Lowdefy CLI: `pnpx lowdefy@4 dev`.
 
 ## More Lowdefy resources
 
