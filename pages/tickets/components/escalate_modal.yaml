@@ -1,0 +1,38 @@
+id: selected.escalate_modal
+type: Modal
+properties:
+  okText: Escalate
+events:
+  onOk:
+    - id: validate
+      type: Validate
+      messages:
+        error: A comment is required.
+      params: selected.escalate_comment
+    - id: escalate_ticket
+      type: Request
+      params: escalate_ticket
+    - id: refresh
+      type: Request
+      params:
+        - fetch_tickets
+        - fetch_selected
+    - id: set_state
+      type: SetState
+      params:
+        selected:
+          _request: fetch_selected.0
+        tickets_list:
+          _request: fetch_tickets
+blocks:
+  - id: selected.comment_modal_title
+    type: Markdown
+    style:
+      marginBottom: 16px
+    properties:
+      content: '#### Escalate ticket'
+  - id: selected.escalate_comment
+    type: TextArea
+    required: true
+    properties:
+      title: comment

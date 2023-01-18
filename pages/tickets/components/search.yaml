@@ -1,0 +1,105 @@
+id: search_box
+type: Box
+layout:
+  contentGutter: 6
+blocks:
+  - id: search_input_box
+    type: Box
+    layout:
+      contentGutter: 6
+    blocks:
+      - id: search_input
+        type: TextInput
+        layout:
+          flex: 1 1 auto
+        properties:
+          disabled:
+            # Logical tests that are used often are also referenced
+            # The inputs should be disabled when the tickets loading, so the user can only make one request at a time
+            # A loading state is set by the fetch_tickets action, that is used to determine if he tickets are loading
+            _ref: pages/tickets/logic/tickets_loading.yaml
+          placeholder: Search
+          label:
+            disabled: true
+        events:
+          onPressEnter:
+            # Fetch the tickets when enter is pressed and the text input is focused
+            _ref: pages/tickets/actions/fetch_tickets.yaml
+      - id: search_button
+        type: Button
+        layout:
+          flex: 0 1 auto
+        properties:
+          disabled:
+            _ref: pages/tickets/logic/tickets_loading.yaml
+          title: Search
+          icon: AiOutlineSearch
+        events:
+          onClick:
+            _ref: pages/tickets/actions/fetch_tickets.yaml
+  - id: status_selector
+    type: Selector
+    layout:
+      span: 6
+    properties:
+      disabled:
+        _ref: pages/tickets/logic/tickets_loading.yaml
+      label:
+        disabled: true
+      placeholder: Status
+      options:
+        _global: statuses
+      size: small
+    events:
+      onChange:
+        _ref: pages/tickets/actions/fetch_tickets.yaml
+  - id: type_selector
+    type: Selector
+    layout:
+      span: 6
+    properties:
+      disabled:
+        _ref: pages/tickets/logic/tickets_loading.yaml
+      label:
+        disabled: true
+      placeholder: Type
+      options:
+        - Invoices
+        - Late Delivery
+        - Return Deposit
+        - Other
+      size: small
+    events:
+      onChange:
+        _ref: pages/tickets/actions/fetch_tickets.yaml
+  - id: open_closed_selector
+    type: Selector
+    layout:
+      span: 6
+    properties:
+      allowClear: false
+      disabled:
+        _ref: pages/tickets/logic/tickets_loading.yaml
+      label:
+        disabled: true
+      options:
+        - Open
+        - Closed
+      size: small
+    events:
+      onChange:
+        _ref: pages/tickets/actions/fetch_tickets.yaml
+  - id: flagged_selector
+    type: CheckboxSelector
+    layout:
+      span: 6
+    properties:
+      disabled:
+        _ref: pages/tickets/logic/tickets_loading.yaml
+      label:
+        disabled: true
+      options:
+        - Only flagged
+    events:
+      onChange:
+        _ref: pages/tickets/actions/fetch_tickets.yaml

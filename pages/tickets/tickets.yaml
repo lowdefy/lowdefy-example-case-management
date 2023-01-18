@@ -1,0 +1,79 @@
+id: tickets
+type: PageHeaderMenu
+properties:
+  title: Tickets
+  content:
+    style:
+      background: '#f5f5f5'
+layout:
+  contentGutter: 16
+
+events:
+  onMount:
+    - id: init
+      type: SetState
+      params:
+        # Initialize the page state
+        flagged_selector: []
+        open_closed_selector: Open
+        selected: {}
+        tickets_loading: true
+  onMountAsync:
+    # Fetch the tickets
+    - id: fetch_tickets
+      type: Request
+      params:
+        - fetch_tickets
+    - id: set_fetched_tickets
+      type: SetState
+      params:
+        tickets_loading: false
+        # Set the tickets to state to populate the tickets list
+        tickets_list:
+          _request: fetch_tickets
+
+requests:
+  # Requests and actions are written in the requests/actions directories and referenced
+  # to make the files easier to read.
+  # They could also be used on multiple pages then.
+  - _ref: pages/tickets/requests/change_status_on_ticket.yaml
+  - _ref: pages/tickets/requests/close_ticket.yaml
+  - _ref: pages/tickets/requests/comment_on_ticket.yaml
+  - _ref: pages/tickets/requests/escalate_ticket.yaml
+  - _ref: pages/tickets/requests/fetch_tickets.yaml
+  - _ref: pages/tickets/requests/fetch_selected.yaml
+  - _ref: pages/tickets/requests/set_flagged.yaml
+
+areas:
+  header:
+    blocks:
+      - _ref: shared/components/view_github.yaml
+
+blocks:
+  # This box contains the search box and list of tickets on the lhs of the screen
+  - id: list_box
+    type: Box
+    layout:
+      span: 10
+      contentGutter: 6
+    blocks:
+      - id: open_title
+        type: Markdown
+        skeleton:
+          type: SkeletonParagraph
+          properties:
+            lines: 1
+        properties:
+          content: '###### Tickets'
+
+      - _ref: pages/tickets/components/search.yaml
+      - _ref: pages/tickets/components/search_results.yaml
+
+  # This box contains the ticket description on the rhs of the screen.
+  - _ref: pages/tickets/components/selected.yaml
+
+  # Modals that are opened by the action buttons
+  - _ref: pages/tickets/components/change_status_modal.yaml
+  - _ref: pages/tickets/components/comment_modal.yaml
+  - _ref: pages/tickets/components/escalate_modal.yaml
+  - _ref: pages/tickets/components/confirm_close_modal.yaml

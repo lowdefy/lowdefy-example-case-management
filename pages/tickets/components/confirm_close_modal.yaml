@@ -1,0 +1,30 @@
+id: selected.confirm_close_modal
+type: Modal
+properties:
+  okButtonProps:
+    danger: true
+  okText: Close
+events:
+  onOk:
+    - id: close_ticket
+      type: Request
+      params: close_ticket
+    - id: reset_selected
+      type: SetState
+      params:
+        selected_id: null
+        selected: {}
+    - id: refresh
+      type: Request
+      params:
+        - fetch_tickets
+    - id: set_tickets
+      type: SetState
+      params:
+        tickets_list:
+          _request: fetch_tickets
+blocks:
+  - id: selected.confirm_close_modal_text
+    type: Markdown
+    properties:
+      content: '#### Are you sure you want to close this issue?'

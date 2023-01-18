@@ -74,5 +74,5 @@ global:
     Closed: AiOutlineStop
 
 pages:
-  - _ref: tickets.yaml
-  - _ref: new-ticket.yaml
+  - _ref: pages/tickets/tickets.yaml
+  - _ref: pages/new-ticket/new-ticket.yaml

@@ -1,0 +1,39 @@
+id: selected.comment_modal
+type: Modal
+properties:
+  okText: Save
+events:
+  onOk:
+    - id: validate
+      type: Validate
+      messages:
+        error: A comment is required.
+      params: selected.comment_input
+    - id: comment_on_ticket
+      type: Request
+      params: comment_on_ticket
+    - id: refresh
+      type: Request
+      params:
+        - fetch_tickets
+        - fetch_selected
+    - id: set_state
+      type: SetState
+      params:
+        selected:
+          _request: fetch_selected.0
+        tickets_list:
+          _request: fetch_tickets
+blocks:
+  - id: selected.comment_modal_title
+    type: Markdown
+    style:
+      marginBottom: 16px
+    properties:
+      content: '#### Comment'
+  - id: selected.comment_input
+    type: TextArea
+    required: true
+    properties:
+      label:
+        disabled: true

@@ -1,0 +1,298 @@
+# This box contains the ticket description on the rhs of the screen.
+id: selected_box
+type: Box
+layout:
+  span: 14
+blocks:
+  - id: selected.title
+    type: Markdown
+    loading:
+      _ref: pages/tickets/logic/selected_loading.yaml
+    skeleton:
+      type: SkeletonParagraph
+      properties:
+        lines: 1
+    properties:
+      content: '###### Selected'
+  - id: selected.card
+    type: Card
+    loading:
+      _ref: pages/tickets/logic/selected_loading.yaml
+    skeleton:
+      type: Card
+      blocks:
+        - type: Skeleton
+          properties:
+            height: 220
+    style:
+      marginTop: 4
+    blocks:
+      - id: selected.not_selected
+        type: Result
+        visible:
+          _ref: pages/tickets/logic/no_selected.yaml
+        properties:
+          icon:
+            name: AiOutlineContainer
+            color: '#bfbfbf'
+          subTitle: No ticket selected
+      - id: selected.visible_box
+        type: Box
+        visible:
+          _ref: pages/tickets/logic/ticket_selected.yaml
+        layout:
+          contentGutter: 16
+        blocks:
+          - id: selected.header_box
+            type: Box
+            layout:
+              contentAlign: middle
+              contentGutter: 16
+            blocks:
+              - id: selected.status_icon
+                type: Icon
+                layout:
+                  flex: 0 1 auto
+                properties:
+                  size: 32
+                  color:
+                    _get:
+                      from:
+                        _global: statusColors
+                      key:
+                        _state: selected.status
+                  name:
+                    _get:
+                      from:
+                        _global: statusIcons
+                      key:
+                        _state: selected.status
+              - id: selected.status
+                type: Html
+                layout:
+                  flex: 0 1 auto
+                properties:
+                  html:
+                    _nunjucks:
+                      template: |
+                        <span>
+                          {{ status }}
+                        </span>
+                      on:
+                        _state: selected
+              - id: selected.ticket_id
+                type: Html
+                layout:
+                  flex: 1 1 auto
+                properties:
+                  html:
+                    _nunjucks:
+                      template: |
+                        <font style='font-size:24px' >
+                          <b>#{{ ticket_id }}</b>
+                        </font>
+                      on:
+                        _state: selected
+              - id: selected.flag
+                type: Icon
+                layout:
+                  flex: 0 1 auto
+                properties:
+                  size: 32
+                  name: AiOutlineFlag
+                  color:
+                    _if:
+                      test:
+                        _eq:
+                          - _state: selected.flagged
+                          - true
+                      then: '#f5222d'
+                      else: '#bfbfbf'
+                events:
+                  onClick:
+                    _ref: pages/tickets/actions/set_flagged.yaml
+          - id: selected.actions_box
+            type: Box
+            layout:
+              contentGutter: 8
+            blocks:
+              - id: selected.change_status_button
+                type: Button
+                layout:
+                  flex: 1 1 auto
+                properties:
+                  title: Change Status
+                  block: true
+                  type: default
+                  icon: AiOutlineRetweet
+                events:
+                  onClick:
+                    - id: open_change_status_modal
+                      type: CallMethod
+                      params:
+                        blockId: selected.change_status_modal
+                        method: toggleOpen
+              - id: selected.comment_button
+                type: Button
+                layout:
+                  flex: 1 1 auto
+                properties:
+                  title: Comment
+                  block: true
+                  type: default
+                  icon: AiOutlineMessage
+                events:
+                  onClick:
+                    - id: open_comment_modal
+                      type: CallMethod
+                      params:
+                        blockId: selected.comment_modal
+                        method: toggleOpen
+              - id: selected.escalate_button
+                type: Button
+                layout:
+                  flex: 1 1 auto
+                properties:
+                  title: Escalate
+                  block: true
+                  type: default
+                  icon: AiOutlineExclamationCircle
+                events:
+                  onClick:
+                    - id: open_escalate_modal
+                      type: CallMethod
+                      params:
+                        blockId: selected.escalate_modal
+                        method: toggleOpen
+              - id: selected.close_button
+                type: Button
+                layout:
+                  flex: 1 1 auto
+                properties:
+                  disabled:
+                    _eq:
+                      - _state: selected.status
+                      - Closed
+                  title: Close
+                  block: true
+                  type: default
+                  icon: AiOutlineStop
+                events:
+                  onClick:
+                    - id: open_confirm_close_modal
+                      type: CallMethod
+                      params:
+                        blockId: selected.confirm_close_modal
+                        method: toggleOpen
+          - id: selected.description_box
+            type: Box
+            layout:
+              contentGutter: 42
+            blocks:
+              - id: selected.descriptions
+                type: Descriptions
+                layout:
+                  span: 12
+                properties:
+                  bordered: true
+                  column: 1
+                  size: small
+                  items:
+                    - label: Name
+                      value:
+                        _state: selected.name
+                    - label: Company
+                      value:
+                        _state: selected.company
+                    - label: Phone
+                      value:
+                        _state: selected.phone
+              # These values are created randomly when the ticket is created
+              # The could have been looked up from some customer data though
+              - id: selected.satisfaction_box
+                type: Box
+                layout:
+                  span: 12
+                  contentJustify: center
+                  contentGutter: 4
+                blocks:
+                  - id: selected.satisfaction_title
+                    type: Markdown
+                    properties:
+                      content: '###### Satisfaction score'
+                  - id: selected.satisfaction_score
+                    type: Progress
+                    properties:
+                      showInfo: true
+                      percent:
+                        _state: selected.satisfaction_score
+                      strokeColor:
+                        from: '#faad14'
+                        to: '#52c41a'
+                  - id: selected.satisfaction_title
+                    type: Markdown
+                    properties:
+                      content: '###### Past orders'
+                  - id: selected.past_orders
+                    type: Statistic
+                    properties:
+                      suffixIcon: AiOutlineShoppingCart
+                      value:
+                        _state: selected.past_orders
+              - id: selected.ticket_description
+                type: Markdown
+                style:
+                  '.markdown-body':
+                    fontSize: 14
+                properties:
+                  content:
+                    _nunjucks:
+                      template: |
+                        {{ ticket_description }}
+                      on:
+                        _state: selected
+
+              - id: selected.history
+                type: TimelineList
+                properties:
+                  data:
+                    _mql.aggregate:
+                      pipeline:
+                        - $addFields:
+                            icons:
+                              $objectToArray:
+                                _global: actionIcons
+                            colors:
+                              $objectToArray:
+                                _global: actionColors
+                        - $project:
+                            icon:
+                              name:
+                                $arrayElemAt:
+                                  - $icons.v
+                                  - $indexOfArray:
+                                      - $icons.k
+                                      - $action
+                              color:
+                                $arrayElemAt:
+                                  - $colors.v
+                                  - $indexOfArray:
+                                      - $colors.k
+                                      - $action
+                      on:
+                        _state: selected.history
+
+                blocks:
+                  - id: selected.history.$.description
+                    type: Html
+                    style:
+                      fontSize: 12
+                    properties:
+                      html:
+                        _nunjucks:
+                          template: |
+                            <h3> {{ action }} </h3>
+                            <p style="font-size: 10px;" ><i>{{ timestamp | date("lll") }}</i></p>
+                            <p>{{ comment }}</p>
+                          on:
+                            _state: selected.history.$
