@@ -1,0 +1,44 @@
+id: selected.change_status_modal
+type: Modal
+properties:
+  okText: Change Status
+events:
+  onOk:
+    - id: validate
+      type: Validate
+      messages:
+        error: A status is required.
+      params: selected.change_status_selector
+    - id: change_status_on_ticket
+      type: Request
+      params: change_status_on_ticket
+    - id: refresh
+      type: Request
+      params:
+        - fetch_tickets
+        - fetch_selected
+    - id: set_state
+      type: SetState
+      params:
+        selected:
+          _request: fetch_selected.0
+        tickets_list:
+          _request: fetch_tickets
+blocks:
+  - id: selected.change_status_title
+    type: Markdown
+    style:
+      marginBottom: 16px
+    properties:
+      content: '#### Change Status'
+  - id: selected.change_status_selector
+    type: Selector
+    required: true
+    properties:
+      title: New Status
+      options:
+        _global: statuses
+  - id: selected.change_status_comment
+    type: TextArea
+    properties:
+      title: comment

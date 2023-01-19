@@ -1,7 +1,5 @@
 # Lowdefy Case Management Example
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/7c9c5633-4323-491d-b02d-05406f694fc2/deploy-status)](https://app.netlify.com/sites/lowdefy-example-case-management/deploys)
-
 > [View this example.](https://example-case-management.lowdefy.com)
 
 This example focuses on building a rich UI for a hypothetical case management app, in a customer relations setting.
@@ -9,8 +7,6 @@ This example focuses on building a rich UI for a hypothetical case management ap
 It provides a interface where cases can be searched and filtered. Cases have a status that can be changed, and can be commented on, flagged, escalated, or closed.
 
 The main purpose of this example is to show what types of apps can be built with Lowdefy, how to construct rich UIs, and how the MongoDB connection can be used.
-
-This example is deployed using [Netlify](https://docs.lowdefy.com/deployment).
 
 ## Running this example
 
@@ -21,11 +17,7 @@ This example is deployed using [Netlify](https://docs.lowdefy.com/deployment).
     - You can read more about the [Lowdefy MongoDB connector](https://docs.lowdefy.com/MongoDB).
 - Clone this repository.
 - Create a `.env` file in your project folder and set your MongoDB database connector URI as a variable in the `.env` file: `LOWDEFY_SECRET_EXAMPLES_MDB="{{ your_mongodb_connection_uri }}"`
-- In the command console, navigate to your project folder and run the Lowdefy CLI: `npx lowdefy@latest dev`.
-
-## Deploying this example
-
-This simplest solution is to deploy this example to [Netlify](https://netlify.com). See [the Netlify Deployment instructions](https://docs.lowdefy.com/deployment) for more detail on how to deploy a Lowdefy app to Netlify.
+- In the command console, navigate to your project folder and run the Lowdefy CLI: `pnpx lowdefy@4 dev`.
 
 ## More Lowdefy resources
 

@@ -1,0 +1,89 @@
+id: new-ticket
+type: PageHeaderMenu
+properties:
+  title: New Ticket
+  content:
+    style:
+      background: '#f5f5f5'
+
+requests:
+  - _ref: pages/new-ticket/requests/insert_ticket.yaml
+
+areas:
+  header:
+    blocks:
+      - _ref: shared/components/view_github.yaml
+
+  content:
+    justify: center
+    blocks:
+      # This box limits the width of the content to 800px
+      - id: max_width
+        type: Box
+        layout:
+          size: 800px # Initial width of the box
+          shrink: 1 # Allow the box to shrink if available space on screen is less than 800px
+          contentGutter: 8
+        blocks:
+          - id: ticket_title
+            type: Title
+            properties:
+              content: New query
+              level: 2
+          - id: name
+            type: TextInput
+            required: true
+            properties:
+              title: Name
+              size: large
+          - id: company
+            type: AutoComplete
+            required: true
+            properties:
+              title: Company
+              size: large
+              options:
+                - Company, Inc.
+                - Distribution Logistics
+                - GHT Consulting
+          - id: phone
+            type: TextInput
+            required: true
+            properties:
+              title: Phone
+              size: large
+          - id: type
+            type: Selector
+            required: true
+            properties:
+              title: Ticket type
+              size: large
+              options:
+                - Invoices
+                - Late Delivery
+                - Return Deposit
+                - Other
+          - id: ticket_description
+            type: TextArea
+            required: true
+            properties:
+              title: Ticket description
+              size: large
+          - id: submit
+            type: Button
+            style:
+              marginTop: 8
+            properties:
+              title: Submit
+              size: large
+              block: true
+            events:
+              # Validate inputs, insert the ticket and reset when the submit button is clicked
+              onClick:
+                - id: validate
+                  type: Validate
+                - id: submit
+                  type: Request
+                  params: insert_ticket
+                - id: reset
+                  type: Reset

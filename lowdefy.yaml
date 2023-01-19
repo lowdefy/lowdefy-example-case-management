@@ -1,5 +1,5 @@
-name: 'lowdefy-example-case-management'
-lowdefy: '4.0.0-alpha.37'
+name: lowdefy-example-case-management
+lowdefy: 4.0.0-alpha.37
 licence: MIT
 
 connections:
@@ -19,13 +19,13 @@ menus:
         type: MenuLink
         pageId: tickets
         properties:
-          icon: ProfileOutlined
+          icon: AiOutlineProfile
           title: Tickets
       - id: new-ticket
         type: MenuLink
         pageId: new-ticket
         properties:
-          icon: AlertOutlined
+          icon: AiOutlineAlert
           title: New Ticket
 
 global:
@@ -55,24 +55,24 @@ global:
     Closed: '#52c41a'
 
   statusIcons:
-    New: AiTwotonePlusCircle
+    New: AiOutlinePlusCircle
     Escalated: AiOutlineExclamationCircle
-    Investigation Started: AiTwotoneTool
-    Client Contacted: AiTwotoneSound
+    Investigation Started: AiOutlineTool
+    Client Contacted: AiOutlineSound
     Awaiting Confirmation: AiOutlineLike
     Closed: AiOutlineStop
 
   actionIcons:
-    Created: AiTwotonePlusCircle
-    Changed status to Investigation Started: AiTwotoneTool
-    Changed status to Client Contacted: AiTwotoneSound
+    Created: AiOutlinePlusCircle
+    Changed status to Investigation Started: AiOutlineTool
+    Changed status to Client Contacted: AiOutlineSound
     Changed status to Awaiting Confirmation: AiOutlineLike
     Escalated: AiOutlineExclamationCircle
-    Flagged: AiTwotoneFlag
-    Removed flag: AiTwotoneFlag
-    Commented: AiTwotoneMessage
+    Flagged: AiOutlineFlag
+    Removed flag: AiOutlineFlag
+    Commented: AiOutlineMessage
     Closed: AiOutlineStop
 
 pages:
-  - _ref: tickets.yaml
-  - _ref: new-ticket.yaml
+  - _ref: pages/tickets/tickets.yaml
+  - _ref: pages/new-ticket/new-ticket.yaml
