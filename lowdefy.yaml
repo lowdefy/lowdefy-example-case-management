@@ -1,6 +1,6 @@
 name: lowdefy-example-case-management
 lowdefy: 4.0.0-rc.15
-licence: MIT
+license: MIT
 
 connections:
   - id: tickets
@@ -36,23 +36,23 @@ global:
 
   # Maps of colors and icons for statuses and actions
   statusColors:
-    New: '#722ed1'
-    Investigation Started: '#1890ff'
-    Client Contacted: '#13c2c2'
-    Awaiting Confirmation: '#7cb305'
-    Escalated: '#faad14'
-    Closed: '#bfbfbf'
+    New: "#722ed1"
+    Investigation Started: "#1890ff"
+    Client Contacted: "#13c2c2"
+    Awaiting Confirmation: "#7cb305"
+    Escalated: "#faad14"
+    Closed: "#bfbfbf"
 
   actionColors:
-    Created: '#722ed1'
-    Changed status to Investigation Started: '#1890ff'
-    Changed status to Client Contacted: '#13c2c2'
-    Changed status to Awaiting Confirmation: '#7cb305'
-    Escalated: '#faad14'
-    Flagged: '#f5222d'
-    Removed flag: '#bfbfbf'
-    Commented: '#bfbfbf'
-    Closed: '#52c41a'
+    Created: "#722ed1"
+    Changed status to Investigation Started: "#1890ff"
+    Changed status to Client Contacted: "#13c2c2"
+    Changed status to Awaiting Confirmation: "#7cb305"
+    Escalated: "#faad14"
+    Flagged: "#f5222d"
+    Removed flag: "#bfbfbf"
+    Commented: "#bfbfbf"
+    Closed: "#52c41a"
 
   statusIcons:
     New: AiOutlinePlusCircle
