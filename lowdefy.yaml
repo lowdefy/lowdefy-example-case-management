@@ -1,5 +1,5 @@
 name: lowdefy-example-case-management
-lowdefy: 4.0.0-rc.15
+lowdefy: 4.0.1
 license: MIT
 
 connections:
